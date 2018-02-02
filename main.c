@@ -20,6 +20,7 @@
 
 int		ft_print_usage(void);
 char	*ft_base64_encode(char *input);
+char	*ft_base64_decode(char *input);
 
 int		main(int ac, char **av)
 {
@@ -29,10 +30,11 @@ int		main(int ac, char **av)
 		return (ft_print_usage());
 	if (!ft_strcmp(av[1], "-e"))
 		hh = ft_base64_encode(av[2]);
-	// else if (ft_strcmp(av[1], "-d"))
-	// 	hh = ft_base64_decode(av[2]);
-	ft_printf("crypted: %s\n", hh);
+	else if (!ft_strcmp(av[1], "-d"))
+		hh = ft_base64_decode(av[2]);
+	ft_printf("result: %s\n", hh);
 	ft_strdel(&hh);
+
 	return (0);
 }
 
@@ -46,6 +48,43 @@ char	*ft_base64_decode(char *input)
 {
 	const char	base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	uint32_t	convert;
+	char		*res;
+	char		*temp;
+	char		*fordel;
+	int			i;
+	int			j;
+
+	res = ft_strnew(0);
+	while (*input)
+	{
+		i = 0;
+		convert = 0;
+		while (i < 4)
+		{
+			j = 0;
+			if (*(input + i) != '=')
+				while (*(input + i) != base64[j] && j < 64)
+					j++;
+			convert = convert | j;
+			convert <<= 6;
+			i++;
+		}
+		convert <<= 2;
+		temp = ft_strnew(3);
+		i = 0;
+		while (i < 3)
+		{
+			temp[i] = convert >> (24 - 8 * i) & 255;
+			i++;
+		}
+		fordel = res;
+		res = ft_strjoin(res, temp);
+		ft_strdel(&fordel);
+		ft_strdel(&temp);
+		input += 4;
+	}
+	return (res);
+
 
 }
 
@@ -77,6 +116,7 @@ char	*ft_base64_encode(char *input)
 			convert <<= 8;
 			i++;
 		}
+		ft_printf("convert in encode = %i\n", convert);
 		temp = ft_strnew(4);
 		i = 0;
 		while (i < 4)
