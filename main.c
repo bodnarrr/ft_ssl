@@ -22,16 +22,17 @@ int		ft_print_usage(void);
 char	*ft_base64_encode(char *input);
 char	*ft_base64_decode(char *input);
 
+
 int		main(int ac, char **av)
 {
 	char *hh;
 
-	if (ac == 1)
+	if (ac == 4 && !ft_strcmp(av[1], "base64") && !ft_strcmp(av[2], "-e"))
+		hh = ft_base64_encode(av[3]);
+	else if (ac == 4 && !ft_strcmp(av[1], "base64") && !ft_strcmp(av[2], "-d"))
+		hh = ft_base64_decode(av[3]);
+	else
 		return (ft_print_usage());
-	if (!ft_strcmp(av[1], "-e"))
-		hh = ft_base64_encode(av[2]);
-	else if (!ft_strcmp(av[1], "-d"))
-		hh = ft_base64_decode(av[2]);
 	ft_printf("result: %s\n", hh);
 	ft_strdel(&hh);
 
@@ -84,8 +85,6 @@ char	*ft_base64_decode(char *input)
 		input += 4;
 	}
 	return (res);
-
-
 }
 
 char	*ft_base64_encode(char *input)
@@ -105,8 +104,9 @@ char	*ft_base64_encode(char *input)
 	res = ft_strnew(0);
 	move = 0;
 	len = ft_strlen(input);
-	while (move < len - 1)
+	while (move <= len - 1)
 	{
+		printf("input: %s\n", input);
 		convert = 0;
 		i = 0;
 		while (i < 3)
@@ -116,7 +116,7 @@ char	*ft_base64_encode(char *input)
 			convert <<= 8;
 			i++;
 		}
-		ft_printf("convert in encode = %i\n", convert);
+		ft_printf("conv = %i\n", convert);
 		temp = ft_strnew(4);
 		i = 0;
 		while (i < 4)
