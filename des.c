@@ -64,7 +64,7 @@ static uint8_t expand_right[48] =
 	15, 16, 17, 18, 19, 20,
 	19, 20, 21, 22, 23, 24,
 	23, 24, 25, 26, 27, 28,
-	27, 28, 29, 30, 21, 0};
+	27, 28, 29, 30, 31, 0};
 
 static uint8_t six_to_four1[64] =
 	{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
@@ -94,7 +94,7 @@ static uint8_t six_to_four5[64] =
 	{2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9,
 	14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6,
 	4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14,
-	3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14};
+	11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3};
 
 static uint8_t six_to_four6[64] =
 	{12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11,
@@ -113,6 +113,16 @@ static uint8_t six_to_four8[64] =
 	1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2,
 	7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
 	2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11};
+
+static uint8_t permut_p[32] =
+	{15, 6, 19, 20,
+	28, 11, 27, 16,
+	0, 14, 22, 25,
+	4, 17, 30, 9,
+	1, 7, 23, 13,
+	31, 26, 2, 8,
+	18, 12, 29, 5,
+	21, 10, 3, 24};
 
 static uint8_t *(six_to_four[]) =
 	{six_to_four1,	six_to_four2, six_to_four3, six_to_four4,
@@ -182,6 +192,21 @@ uint64_t	ft_pc2_for_key(uint64_t key)
 	return (ret);
 }
 
+uint64_t	ft_permute_p(uint64_t input)
+{
+	uint64_t	ret;
+	int			i;
+	
+	ret = 0;
+	i = -1;
+	while (++i < 32)
+	{
+		ret <<= 1;
+		ret = ret | ((input >> (31 - permut_p[i])) & 1);
+	}
+	return (ret);
+}
+
 
 char	*ft_des_ecb(char *input)
 {
@@ -221,9 +246,7 @@ char	*ft_des_ecb(char *input)
 	key_left = key >> 28;
 	key_right = key & 0xFFFFFFF;
 	key_curr = ((key_left << 1 & 0xEFFFFFFF) | ((key_left >> 27) & 1)) << 28 | ((key_right << 1 & 0xEFFFFFFF) | ((key_right >> 27) & 1));
-	key_curr = 0xE19955FAACCF1E;
 	key_curr = ft_pc2_for_key(key_curr);
-	right_last = 0xF0AAF0AA;
 	right_curr = ft_expand_right(right_last);
 	right_curr = right_curr ^ key_curr;
 	i = -1;
@@ -232,15 +255,10 @@ char	*ft_des_ecb(char *input)
 	{
 		temp <<= 4;
 		temp6bit = right_curr >> (42 - i * 6) & 0x3F;
-		ft_printf("6bit: %.6b\n", temp6bit);
-		ft_printf("iter = %i\trow = %i\t row in bin = %.2b\tcol = %i\tcol in bin = %.2b\n", i, E2BITS(temp6bit), E2BITS(temp6bit), C4BITS(temp6bit), C4BITS(temp6bit));
-		ft_printf("nb = %i\nin bin = %.4b\n\n", six_to_four[i][C4BITS(temp6bit) + 16 * E2BITS(temp6bit)], six_to_four[i][C4BITS(temp6bit) + 16 * E2BITS(temp6bit)]);
-		
-
-
-		temp = temp | six_to_four[i][(C4BITS(temp6bit)) | (16 * E2BITS(temp6bit))];
+		temp = temp | six_to_four[i][(C4BITS(temp6bit)) | ((E2BITS(temp6bit)) << 4)];
 	}
-	ft_printf("----------------------- check example after S1\n01011100100000101011010110010111\n%.32b\n----------------------- finish this check\n", temp);
+	temp = ft_permute_p(temp);
+	
 
 
 
@@ -252,7 +270,8 @@ char	*ft_des_ecb(char *input)
 
 
 
-	return (ft_strdup("res"));
+
+	return (ft_strdup("OK!"));
 }
 
 int		ft_print_usage(void)
