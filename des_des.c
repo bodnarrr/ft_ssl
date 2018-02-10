@@ -19,20 +19,19 @@
 #include "libftprintf.h"
 #include "libft/libft.h"
 
-#define CENTR4OF6(x)		x >> 1 & 15
-#define FL2OF6(x) 			(x & 1) | (x >> 4 & 2)
-#define L32OF64(x)			x >> 32
-#define R32OF64(x)			x & 0xFFFFFFFF
-#define L28OF56(x)			x >> 28
-#define R28OF56(x)			x & 0xFFFFFFF
-#define JOINBITS(x, y, sz)	(x << sz) | y
+#define CENTR4OF6(x)		((x) >> 1 & 15)
+#define FL2OF6(x) 			((x & 1) | (x >> 4 & 2))
+#define L32OF64(x)			((x) >> 32)
+#define R32OF64(x)			((x) & 0xFFFFFFFF)
+#define L28OF56(x)			((x) >> 28)
+#define R28OF56(x)			((x) & 0xFFFFFFF)
+#define JOINBITS(x, y, sz)	((x << sz) | y)
 #define EIGHTED 			"\b\b\b\b\b\b\b\b"
 
 typedef struct	s_desecb
 {
 	size_t		input_len;
 	size_t		encryted;
-
 }				t_desecb;
 
 uint8_t initial_shuffle[64] =
@@ -140,6 +139,16 @@ uint8_t p_permut[32] =
 	19, 13, 30, 6,
 	22, 11, 4, 25};
 
+uint8_t finish[64] =
+	{40, 8, 48, 16, 56, 24, 64, 32,
+	39, 7, 47, 15, 55, 23, 63, 31,
+	38, 6, 46, 14, 54, 22, 62, 30,
+	37, 5, 45, 13, 53, 21, 61, 29,
+	36, 4, 44, 12, 52, 20, 60, 28,
+	35, 3, 43, 11, 51, 19, 59, 27,
+	34, 2, 42, 10, 50, 18, 58, 26,
+	33, 1, 41 ,9, 49, 17, 57, 25};
+
 char			*ft_filled_by_len(char *input)
 {
 	size_t		len;
@@ -155,8 +164,8 @@ char			*ft_filled_by_len(char *input)
 	{
 		res = ft_strnew(8);
 		i = 8 - len;
-		res = ft_memcpy((void*)res, (const void*)input, len);
-		res = ft_memset((void*)res, i, i);
+		res = ft_memset(res , i, 8);
+		res = ft_memcpy(res, (const void*)input, len);
 		return (res);
 	}
 }
@@ -249,24 +258,45 @@ char	*ft_encoding_des(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
+	converted = 81985529216486895; //just an example!
+	ft_printf("======= check input in binary=========\nin: 0000000100100011010001010110011110001001101010111100110111101111\nmy: %.64b\n====================================================================\n\n", converted);
 	converted = ft_permut(converted, initial_shuffle, 64, 64);
+	ft_printf("======= check input after initial permute=========\nin: 1100110000000000110011001111111111110000101010101111000010101010\nmy: %.64b\n====================================================================\n\n", converted);
+	key = 1383827165325090801; //just an example!
+	ft_printf("======= check key on start=========\nin: 0001001100110100010101110111100110011011101111001101111111110001\nmy: %.64b\n====================================================================\n\n", key);
 	key = ft_permut(key, pc1, 56, 64);
-	left = L32OF64(converted);
+	ft_printf("======= check key after PC1=========\nin: 11110000110011001010101011110101010101100110011110001111\nmy: %.48b\n====================================================================\n\n\n", key);
+
 	while (++i < 16)
 	{
+		ft_printf("Start of %i iteration\n", i);
+		left = L32OF64(converted);
 		left_new = R32OF64(converted);
-		right = ft_permut(R32OF64(converted), expand_right, 48, 32);
+		right = R32OF64(converted);
+		ft_printf("======= check right part=========\nin: 11110000101010101111000010101010\nmy: %.32b\n====================================================================\n\n", right);
+		right = ft_permut(right, expand_right, 48, 32);
+		ft_printf("======= check extented right part=========\nin: 011110100001010101010101011110100001010101010101\nmy: %.48b\n====================================================================\n\n", right);
 		key = ft_shuffle_key(key, key_shift[i]);
-		right = right ^ ft_permut(key, pc2, 48, 56);
+		ft_printf("======= check shuffled key=========\nin: 11100001100110010101010111111010101011001100111100011110\nmy: %.48b\n====================================================================\n", key);
+		key = ft_permut(key, pc2, 48, 56);
+		ft_printf("======= check 48 key after PC2=========\nin: 000110110000001011101111111111000111000001110010\nmy: %.48b\n====================================================================\n", key);
+		right = right ^ key;
+		ft_printf("======= check right after XOR with key=========\nin: 011000010001011110111010100001100110010100100111\nmy: %.48b\n====================================================================\n", right);
 		right = ft_s_boxes(right);
+		ft_printf("======= check right after S boxes=========\nin: 01011100100000101011010110010111\nmy: %.32b\n====================================================================\n", right);
 		right = ft_permut(right, p_permut, 32, 32);
-		right = right ^ left_new;
+		ft_printf("======= check right after P permutation=========\nin: 00100011010010101010100110111011\nmy: %.32b\n====================================================================\n", right);
+		right = right ^ left;
+		ft_printf("======= check right after XOR with left=========\nin: 11101111010010100110010101000100\nmy: %.32b\n====================================================================\n", right);
 		converted = JOINBITS(left_new, right, 32);
+		ft_printf("End of %i iteration\n\n\n", i);
 	}
-	return (ft_string_from_bits(converted));
+	ft_printf("======= check left after 16 iterations=========\nin: 01000011010000100011001000110100\nmy: %.32b\n====================================================================\n", L32OF64(converted));
+	converted =  (R32OF64(converted) << 32) | (L32OF64(converted));
+	return (ft_string_from_bits(ft_permut(converted, finish, 64, 64)));
 }
 
-char			*ft_des_ebc(char *input, uint64_t key)
+char			*ft_des_ecb(char *input, uint64_t key, size_t *output)
 {
 	char		*res;
 	char		*temp;
@@ -275,9 +305,8 @@ char			*ft_des_ebc(char *input, uint64_t key)
 	t_desecb	inf;
 
 	res = ft_strnew(0);
+	ft_bzero(&inf, sizeof(t_desecb));
 	inf.input_len = ft_strlen(input);
-	inf.encryted = 0;
-
 	while (inf.encryted <= inf.input_len)
 	{
 		for_work = ft_filled_by_len(input);
@@ -288,6 +317,7 @@ char			*ft_des_ebc(char *input, uint64_t key)
 		ft_strdel(&for_work);
 		inf.encryted += 8;
 		input += 8;
+		*output += 8;
 	}
 	return (res);
 }
@@ -296,6 +326,13 @@ char			*ft_des_ebc(char *input, uint64_t key)
 
 int 	main(int ac, char **av)
 {
-	ft_printf("res = %s\n", ft_des_ebc("testtest", 0x133457799BBCDFF4));
+	size_t	output;
+	char	*res;
+
+	if (ac < 2)
+		return (1);
+	output = 0;
+	res = ft_des_ecb(av[1], 0x128, &output);
+	write(1, res, output);
 	return (0);
 }

@@ -106,7 +106,6 @@ char	*ft_base64_encode(char *input)
 	len = ft_strlen(input);
 	while (move <= len - 1)
 	{
-		printf("input: %s\n", input);
 		convert = 0;
 		i = 0;
 		while (i < 3)
@@ -116,7 +115,6 @@ char	*ft_base64_encode(char *input)
 			convert <<= 8;
 			i++;
 		}
-		ft_printf("conv = %i\n", convert);
 		temp = ft_strnew(4);
 		i = 0;
 		while (i < 4)
