@@ -26,13 +26,14 @@
 #define L28OF56(x)			x >> 28
 #define R28OF56(x)			x & 0xFFFFFFF
 #define JOINBITS(x, y, sz)	(x << sz) | y
+#define EIGHTED 			"\b\b\b\b\b\b\b\b"
 
 typedef struct	s_desecb
 {
 	size_t		input_len;
 	size_t		encryted;
 
-};
+}				t_desecb;
 
 uint8_t initial_shuffle[64] =
 	{58, 50, 42, 34, 26, 18, 10, 2,
@@ -139,6 +140,26 @@ uint8_t p_permut[32] =
 	19, 13, 30, 6,
 	22, 11, 4, 25};
 
+char			*ft_filled_by_len(char *input)
+{
+	size_t		len;
+	int			i;
+	char		*res;
+
+	len = ft_strlen(input);
+	if (len == 0)
+		return(ft_strdup(EIGHTED));
+	else if (len >= 8)
+		return (ft_strsub(input, 0, 8));
+	else
+	{
+		res = ft_strnew(8);
+		i = 8 - len;
+		res = ft_memcpy((void*)res, (const void*)input, len);
+		res = ft_memset((void*)res, i, i);
+		return (res);
+	}
+}
 
 char			*ft_string_from_bits(uint64_t inf)
 {
@@ -149,7 +170,6 @@ char			*ft_string_from_bits(uint64_t inf)
 	i = -1;
 	while (++i < 8)
 		res[i] = inf >> (56 - i * 8) & 255;
-	ft_printf("res = %s\n", res);
 	return(res);
 }
 
@@ -246,27 +266,29 @@ char	*ft_encoding_des(char *input, uint64_t key)
 	return (ft_string_from_bits(converted));
 }
 
-char		*ft_des_ebc(char *input, uint64_t key)
+char			*ft_des_ebc(char *input, uint64_t key)
 {
-	char	*res;
-	char	*temp;
-	char	*fordel;
-	size_t	len;
+	char		*res;
+	char		*temp;
+	char		*fordel;
+	char		*for_work;
+	t_desecb	inf;
 
 	res = ft_strnew(0);
-	temp = ft_encoding_des(input, key);
-	// while ()
-	// {
-	// 	if (ft_strlen(input) > 8)
-	// 		temp = ft_encoding_des(input, key);
-	// 	else if (ft_strlen(input) < 8 && ft_strlen(input) > 0)
-	// 		temp = ft_encoding_des(ft_filled_by_len(input), key);
-	// 	else
-	// 		temp = ft_encoding_des(EIGHTED STRING);
-	// 	fordel = res;
-	// 	res = ft_strjoin(res, temp);
-	// 	ft_strdel(&temp);
-	// }
+	inf.input_len = ft_strlen(input);
+	inf.encryted = 0;
+
+	while (inf.encryted <= inf.input_len)
+	{
+		for_work = ft_filled_by_len(input);
+		temp = ft_encoding_des(for_work, key);
+		fordel = res;
+		res = ft_strjoin(res, temp);
+		ft_strdel(&temp);
+		ft_strdel(&for_work);
+		inf.encryted += 8;
+		input += 8;
+	}
 	return (res);
 }
 
@@ -274,6 +296,6 @@ char		*ft_des_ebc(char *input, uint64_t key)
 
 int 	main(int ac, char **av)
 {
-	ft_printf("res = %s\n", ft_des_ebc("testtest", 0x133457799BBCDFF1));
+	ft_printf("res = %s\n", ft_des_ebc("testtest", 0x133457799BBCDFF4));
 	return (0);
 }
