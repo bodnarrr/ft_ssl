@@ -258,7 +258,8 @@ char			*ft_encoding_des(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
-	converted = 81985529216486895; //just an example!
+	// converted = 81985529216486895; //just an example!`
+	ft_printf("======= check input in HEX=========\nin: 0123456789ABCDEF\nmy: 0%llX\n====================================================================\n\n", converted);
 	ft_printf("======= check input in binary=========\nin: 0000000100100011010001010110011110001001101010111100110111101111\nmy: %.64b\n====================================================================\n\n", converted);
 	converted = ft_permut(converted, initial_shuffle, 64, 64);
 	ft_printf("======= check input after initial permute=========\nin: 1100110000000000110011001111111111110000101010101111000010101010\nmy: %.64b\n====================================================================\n\n", converted);
@@ -298,6 +299,9 @@ char			*ft_encoding_des(char *input, uint64_t key)
 	ft_printf("======= check right after 16 iterations=========\nin: 00001010010011001101100110010101\nmy: %.32b\n====================================================================\n\n", R32OF64(converted));
 	
 	converted =  (R32OF64(converted) << 32) | (L32OF64(converted));
+	ft_printf("======= check reversed result=========\nin: 0000101001001100110110011001010101000011010000100011001000110100\nmy: %.64b\n====================================================================\n\n", converted);
+	ft_printf("======= LAST check=========\nin: 1000010111101000000100110101010000001111000010101011010000000101\nmy: %.64b\nmy: %llX\nst: 85E813540F0AB405\n====================================================================\n\n", ft_permut(converted, finish, 64, 64), ft_permut(converted, finish, 64, 64));
+
 	return (ft_string_from_bits(ft_permut(converted, finish, 64, 64)));
 }
 
@@ -335,13 +339,19 @@ int 			main(int ac, char **av)
 {
 	size_t		output;
 	char		*res;
+	uint64_t	*inf;
+
+	inf = (uint64_t*)malloc(sizeof(uint64_t));
+	*inf = 11821;//3268077181808523883;
+	// ft_printf("%llu\n", *inf);
+	write(1, inf, 2);
 
 	if (ac < 2)
 		return (1);
 
-	output = 0;
-	res = ft_des_ecb(av[1], 0x128, &output);
-	write(1, res, output);
+	// output = 0;
+	// res = ft_des_ecb(av[1], 0x128, &output);
+	// write(1, res, output);
 
 	return (0);
 }
