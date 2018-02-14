@@ -68,7 +68,7 @@ uint64_t		ft_s_boxes(uint64_t inf)
 	return (res);
 }
 
-uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i)
+uint64_t		ft_shuffle_key(uint64_t key, uint8_t i)
 {
 	uint64_t	res;
 	uint64_t	left;
@@ -82,8 +82,8 @@ uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i)
 		clear = 3;
 	left = L28OF56(key);
 	right = R28OF56(key);
-	left = (left >> i & 0xFFFFFFF) | ((left & clear) << (28 - i));
-	right = (right >> i & 0xFFFFFFF) | ((right & clear) << (28 - i));
+	left = (left << i & 0xFFFFFFF) | (left >> (28 - i) & clear);
+	right = (right << i & 0xFFFFFFF) | (right >> (28 - i) & clear);
 	return (JOINBITS(left, right, 28));
 }
 
@@ -152,6 +152,8 @@ char			*ft_encoding_des(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
+	converted = 14505409144458067133; //just an example!
+	ft_printf("check input\nin: 1100100101001101100100001100001110010001001000000011110010111101\nmy: %.64b\n\n", converted);
 	converted = ft_permut(converted, g_initial_shuffle, 64, 64);
 	key = ft_permut(key, g_pc1, 56, 64);
 	while (++i < 16)
@@ -160,7 +162,7 @@ char			*ft_encoding_des(char *input, uint64_t key)
 		left_new = R32OF64(converted);
 		right = R32OF64(converted);
 		right = ft_permut(right, g_expand_right, 48, 32);
-		key = ft_shuffle_key(key, g_key_shift[i]);
+		key = ft_shuffle_key(key, g_key_shift_rev[i]);
 		right = right ^ ft_permut(key, g_pc2, 48, 56);
 		right = ft_s_boxes(right);
 		right = ft_permut(right, g_p_permut, 32, 32);
@@ -168,10 +170,13 @@ char			*ft_encoding_des(char *input, uint64_t key)
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));
+	ft_printf("output: %.64b\n      : 0100000101101110011001000111001001100101011101110000001000000010\n", ft_permut(converted, g_finish, 64, 64));
+	write(1, ft_string_from_bits(converted), 8);
+	write(1, "\n", 1);
 	return (ft_string_from_bits(ft_permut(converted, g_finish, 64, 64)));
 }
 
-char			*ft_des_ecb_decrypt(char *input, char *key, size_t *output)
+char			*ft_des_ecb_encrypt(char *input, char *key, size_t *output)
 {
 	char		*res;
 	char		*temp;
@@ -206,7 +211,7 @@ int				main(int ac, char **av)
 	if (ac < 2)
 		return (1);
 	output = 0;
-	res = ft_des_ecb_decrypt(av[1], av[2], &output);
+	res = ft_des_ecb_encrypt(av[1], av[2], &output);
 	write(1, res, output);
 	return (0);
 }

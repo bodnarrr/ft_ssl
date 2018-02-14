@@ -2,3 +2,7 @@ a.out
 *.o
 *.a
 libft/
+encrypt
+decrypt
+crypted_andrew
+test
