@@ -35,20 +35,15 @@ char			*ft_filled_by_len(char *input)
 	}
 }
 
-char			*ft_string_from_bits_rev(uint64_t inf, size_t *output)
+char			*ft_string_from_bits(uint64_t inf)
 {
 	char		*res;
-	int			size;
 	uint8_t		temp;
 	int			i;
 
-	size = 8;
-	if ((inf & 255) >= 1 || (inf & 255) <= 7)
-		size = 8 - (inf & 255);
-	*output += size;
-	res = ft_strnew(size);
+	res = ft_strnew(8);
 	i = -1;
-	while (++i < size)
+	while (++i < 8)
 	{
 		temp = (inf >> (56 - i * 8)) & 255;
 		res[i] = temp;
@@ -89,25 +84,6 @@ uint64_t		ft_shuffle_key(uint64_t key, uint8_t i)
 	right = R28OF56(key);
 	left = (left << i & 0xFFFFFFF) | (left >> (28 - i) & clear);
 	right = (right << i & 0xFFFFFFF) | (right >> (28 - i) & clear);
-	return (JOINBITS(left, right, 28));
-}
-
-uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i)
-{
-	uint64_t	res;
-	uint64_t	left;
-	uint64_t	right;
-	int			clear;
-
-	res = 0;
-	if (i == 1)
-		clear = 1;
-	else if (i == 2)
-		clear = 3;
-	left = L28OF56(key);
-	right = R28OF56(key);
-	left = (left >> i) | ((left & clear) << (28 - i));
-	right = (right >> i) | ((right & clear) << (28 - i));
 	return (JOINBITS(left, right, 28));
 }
 
@@ -166,7 +142,7 @@ uint64_t		ft_key_to_bits(char *key)
 	return (res);
 }
 
-char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
+char			*ft_encoding_des(char *input, uint64_t key)
 {
 	uint64_t	converted;
 	int			i;
@@ -176,42 +152,48 @@ char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
-	// converted = 6506523155595102834;
 	converted = ft_permut(converted, g_initial_shuffle, 64, 64);
 	key = ft_permut(key, g_pc1, 56, 64);
-	key = ft_shuffle_key(key, 1);
 	while (++i < 16)
 	{
 		left = L32OF64(converted);
 		left_new = R32OF64(converted);
 		right = R32OF64(converted);
 		right = ft_permut(right, g_expand_right, 48, 32);
-		key = ft_shuffle_key_rev(key, g_key_shift[i]);
+		key = ft_shuffle_key(key, g_key_shift[i]);
 		right = right ^ ft_permut(key, g_pc2, 48, 56);
-		right = ft_permut(ft_s_boxes(right), g_p_permut, 32, 32);
+		right = ft_s_boxes(right);
+		right = ft_permut(right, g_p_permut, 32, 32);
 		right = right ^ left;
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));
-	return (ft_string_from_bits_rev(ft_permut(converted, g_finish, 64, 64), output));
+	return (ft_string_from_bits(ft_permut(converted, g_finish, 64, 64)));
 }
 
-char			*ft_des_ecb_decrypt(char *input, char *key, size_t *output)
+char			*ft_des_ecb_encrypt(char *input, char *key, size_t *output)
 {
 	char		*res;
 	char		*temp;
 	char		*fordel;
-	uint64_t 	bit_key;
+	char		*for_work;
+	t_desecb	inf;
 
 	res = ft_strnew(0);
-	bit_key = ft_key_to_bits(ft_strdup(key));
-	while (*input)
+	inf.input_len = ft_strlen(input);
+	inf.encryted = 0;
+	inf.key = ft_key_to_bits(ft_strdup(key));
+	while (inf.encryted <= inf.input_len)
 	{
-		temp = ft_decoding_des(input, bit_key, output);
+		for_work = ft_filled_by_len(input);
+		temp = ft_encoding_des(for_work, inf.key);
 		fordel = res;
 		res = ft_strjoin(res, temp);
 		ft_strdel(&temp);
+		ft_strdel(&for_work);
+		inf.encryted += 8;
 		input += 8;
+		*output += 8;
 	}
 	return (res);
 }
@@ -224,7 +206,7 @@ int				main(int ac, char **av)
 	if (ac < 2)
 		return (1);
 	output = 0;
-	res = ft_des_ecb_decrypt(av[1], av[2], &output);
+	res = ft_des_ecb_encrypt(av[1], av[2], &output);
 	write(1, res, output);
 	return (0);
 }
