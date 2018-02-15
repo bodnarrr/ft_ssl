@@ -35,5 +35,6 @@ typedef struct	s_desecb
 	size_t		input_len;
 	size_t		encryted;
 	uint64_t	key;
-}				t_desecb;
+	uint64_t	vector;
+}				t_des;
 #endif

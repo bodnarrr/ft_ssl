@@ -187,9 +187,9 @@ char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
 		right = R32OF64(converted);
 		right = ft_permut(right, g_expand_right, 48, 32);
 		key = ft_shuffle_key_rev(key, g_key_shift[i]);
-		right = right ^ ft_permut(key, g_pc2, 48, 56);
+		right ^= ft_permut(key, g_pc2, 48, 56);
 		right = ft_permut(ft_s_boxes(right), g_p_permut, 32, 32);
-		right = right ^ left;
+		right ^= left;
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));

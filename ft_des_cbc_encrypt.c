@@ -142,7 +142,7 @@ uint64_t		ft_key_to_bits(char *key)
 	return (res);
 }
 
-char			*ft_encoding_des(char *input, uint64_t key)
+char			*ft_encoding_cbc(char *input, uint64_t key, uint64_t vector)
 {
 	uint64_t	converted;
 	int			i;
@@ -152,6 +152,7 @@ char			*ft_encoding_des(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
+	converted ^= vector;
 	converted = ft_permut(converted, g_initial_shuffle, 64, 64);
 	key = ft_permut(key, g_pc1, 56, 64);
 	while (++i < 16)
@@ -161,32 +162,34 @@ char			*ft_encoding_des(char *input, uint64_t key)
 		right = R32OF64(converted);
 		right = ft_permut(right, g_expand_right, 48, 32);
 		key = ft_shuffle_key(key, g_key_shift[i]);
-		right = right ^ ft_permut(key, g_pc2, 48, 56);
+		right ^= ft_permut(key, g_pc2, 48, 56);
 		right = ft_s_boxes(right);
 		right = ft_permut(right, g_p_permut, 32, 32);
-		right = right ^ left;
+		right ^= left;
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));
 	return (ft_string_from_bits(ft_permut(converted, g_finish, 64, 64)));
 }
 
-char			*ft_des_ecb_encrypt(char *input, char *key, size_t *output)
+char			*ft_des_cbc_encrypt(char *input, char *key, char *vector, size_t *output)
 {
 	char		*res;
 	char		*temp;
 	char		*fordel;
 	char		*for_work;
-	t_desecb	inf;
+	t_des	inf;
 
 	res = ft_strnew(0);
 	inf.input_len = ft_strlen(input);
 	inf.encryted = 0;
 	inf.key = ft_key_to_bits(ft_strdup(key));
+	inf.vector = ft_key_to_bits(ft_strdup(vector));
 	while (inf.encryted <= inf.input_len)
 	{
 		for_work = ft_filled_by_len(input);
-		temp = ft_encoding_des(for_work, inf.key);
+		temp = ft_encoding_cbc(for_work, inf.key, inf.vector);
+		inf.vector = ft_key_to_bits(ft_strdup(temp));
 		fordel = res;
 		res = ft_strjoin(res, temp);
 		ft_strdel(&temp);
@@ -206,7 +209,7 @@ int				main(int ac, char **av)
 	if (ac < 2)
 		return (1);
 	output = 0;
-	res = ft_des_ecb_encrypt(av[1], av[2], &output);
+	res = ft_des_cbc_encrypt(av[1], av[2], av[3], &output);
 	write(1, res, output);
 	return (0);
 }

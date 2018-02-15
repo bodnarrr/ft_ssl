@@ -98,7 +98,7 @@ char	*ft_base64_encode(char *input)
 	int			move;
 	int			len;
 	int			res_len;
-	
+
 	if (!input)
 		return (NULL);
 	res = ft_strnew(0);

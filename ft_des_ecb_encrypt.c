@@ -161,10 +161,10 @@ char			*ft_encoding_des(char *input, uint64_t key)
 		right = R32OF64(converted);
 		right = ft_permut(right, g_expand_right, 48, 32);
 		key = ft_shuffle_key(key, g_key_shift[i]);
-		right = right ^ ft_permut(key, g_pc2, 48, 56);
+		right ^= ft_permut(key, g_pc2, 48, 56);
 		right = ft_s_boxes(right);
 		right = ft_permut(right, g_p_permut, 32, 32);
-		right = right ^ left;
+		right ^= left;
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));
@@ -177,7 +177,7 @@ char			*ft_des_ecb_encrypt(char *input, char *key, size_t *output)
 	char		*temp;
 	char		*fordel;
 	char		*for_work;
-	t_desecb	inf;
+	t_des		inf;
 
 	res = ft_strnew(0);
 	inf.input_len = ft_strlen(input);

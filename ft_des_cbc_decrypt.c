@@ -166,7 +166,7 @@ uint64_t		ft_key_to_bits(char *key)
 	return (res);
 }
 
-char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
+char			*ft_decoding_cbc(char *input, uint64_t key, uint64_t vector, size_t *output)
 {
 	uint64_t	converted;
 	int			i;
@@ -178,6 +178,7 @@ char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
 	converted = ft_input_to_bits(input);
 	// converted = 6506523155595102834;
 	converted = ft_permut(converted, g_initial_shuffle, 64, 64);
+	converted ^= vector;
 	key = ft_permut(key, g_pc1, 56, 64);
 	key = ft_shuffle_key(key, 1);
 	while (++i < 16)
@@ -196,18 +197,21 @@ char			*ft_decoding_des(char *input, uint64_t key, size_t *output)
 	return (ft_string_from_bits_rev(ft_permut(converted, g_finish, 64, 64), output));
 }
 
-char			*ft_des_ecb_decrypt(char *input, char *key, size_t *output)
+char			*ft_des_cbc_decrypt(char *input, char *key, char *vector, size_t *output)
 {
 	char		*res;
 	char		*temp;
 	char		*fordel;
 	uint64_t 	bit_key;
+	uint64_t	bit_vector;
 
 	res = ft_strnew(0);
 	bit_key = ft_key_to_bits(ft_strdup(key));
+	bit_vector = ft_key_to_bits(ft_strdup(vector));
 	while (*input)
 	{
-		temp = ft_decoding_des(input, bit_key, output);
+		temp = ft_decoding_cbc(input, bit_key, bit_vector, output);
+		bit_vector = ft_key_to_bits(ft_strdup(temp));
 		fordel = res;
 		res = ft_strjoin(res, temp);
 		ft_strdel(&temp);
@@ -224,7 +228,7 @@ int				main(int ac, char **av)
 	if (ac < 2)
 		return (1);
 	output = 0;
-	res = ft_des_ecb_decrypt(av[1], av[2], &output);
+	res = ft_des_cbc_decrypt(av[1], av[2], av[3], &output);
 	write(1, res, output);
 	return (0);
 }
