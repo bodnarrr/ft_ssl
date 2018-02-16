@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
-#include "ft_des_globals.h"
 #include "ft_ssl_des.h"
+#include "ft_des_globals.h"
 
 char			*ft_filled_by_len(char *input)
 {

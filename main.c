@@ -5,140 +5,49 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/30 13:23:06 by abodnar           #+#    #+#             */
-/*   Updated: 2018/01/30 13:23:07 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/16 11:44:51 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/16 11:44:52 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <inttypes.h>
-#include "libftprintf.h"
+#include "ft_ssl_des.h"
 
-int		ft_print_usage(void);
-char	*ft_base64_encode(char *input);
-char	*ft_base64_decode(char *input);
+// int		ft_base64(int ac, char **av, t_ssl_cmds *cmds)
+// {
+// 	ft_printf("base64 working\n");
+// 	return (1);
+// }
+
+int		ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
+{
+	ft_printf("desecb working\n");
+	return (1);
+}
+
+int		ft_descbc(int ac, char **av, t_ssl_cmds *cmds)
+{
+	ft_printf("descbc working\n");
+	return (1);
+}
 
 
 int		main(int ac, char **av)
 {
-	char *hh;
+	t_ssl_cmds	*cmds;
+	int			ret;
 
-	if (ac == 4 && !ft_strcmp(av[1], "base64") && !ft_strcmp(av[2], "-e"))
-		hh = ft_base64_encode(av[3]);
-	else if (ac == 4 && !ft_strcmp(av[1], "base64") && !ft_strcmp(av[2], "-d"))
-		hh = ft_base64_decode(av[3]);
-	else
-		return (ft_print_usage());
-	ft_printf("result: %s\n", hh);
-	ft_strdel(&hh);
-
-	return (0);
-}
-
-int		ft_print_usage(void)
-{
-	ft_printf("usage: ft_ssl command [command opts] [command args]\n");
-	return (1);
-}
-
-char	*ft_base64_decode(char *input)
-{
-	const char	base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	uint32_t	convert;
-	char		*res;
-	char		*temp;
-	char		*fordel;
-	int			i;
-	int			j;
-
-	res = ft_strnew(0);
-	while (*input)
-	{
-		i = 0;
-		convert = 0;
-		while (i < 4)
-		{
-			j = 0;
-			if (*(input + i) != '=')
-				while (*(input + i) != base64[j] && j < 64)
-					j++;
-			convert = convert | j;
-			convert <<= 6;
-			i++;
-		}
-		convert <<= 2;
-		temp = ft_strnew(3);
-		i = 0;
-		while (i < 3)
-		{
-			temp[i] = convert >> (24 - 8 * i) & 255;
-			i++;
-		}
-		fordel = res;
-		res = ft_strjoin(res, temp);
-		ft_strdel(&fordel);
-		ft_strdel(&temp);
-		input += 4;
-	}
-	return (res);
-}
-
-char	*ft_base64_encode(char *input)
-{
-	const char	base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	uint32_t	convert;
-	char		*res;
-	char		*temp;
-	char		*fordel;
-	int			i;
-	int			move;
-	int			len;
-	int			res_len;
-
-	if (!input)
-		return (NULL);
-	res = ft_strnew(0);
-	move = 0;
-	len = ft_strlen(input);
-	while (move <= len - 1)
-	{
-		convert = 0;
-		i = 0;
-		while (i < 3)
-		{
-			if (*(input + i))
-				convert = convert | input[i];
-			convert <<= 8;
-			i++;
-		}
-		temp = ft_strnew(4);
-		i = 0;
-		while (i < 4)
-		{
-			temp[i] = base64[(convert >> (26 - 6 * i)) & 63];
-			i++;
-		}
-		fordel = res;
-		res = ft_strjoin(res, temp);
-		ft_strdel(&fordel);
-		ft_strdel(&temp);
-		input += 3;
-		move += 3;
-	}
-	if (len % 3 != 0)
-	{
-		res_len = ft_strlen(res);
-		if (len % 3 == 2)
-			res[res_len - 1] = '=';
-		else
-		{
-			res[res_len - 1] = '=';
-			res[res_len - 2] = '=';
-		}
-	}
-	return (res);
+	if (ac == 1)
+		return(ft_print_usage());
+	cmds = ft_ssl_get_commands(ac, av);
+	ft_printf("mode = %d\nencr = %d\ndecr = %d\nin = %d\ninpos = %d\nout = %d\noutpos = %d\nkey = %d\nkeypos = %d\nbase64 = %d\n", cmds->mode, cmds->encr, cmds->decr, cmds->in, cmds->inpos, cmds->out, cmds->outpos, cmds->key, cmds->keypos, cmds->base64);
+	if (cmds->mode == 0)
+		return(ft_ssl_error(av[1], &cmds));
+	if (cmds->mode == 1)
+		ret = ft_base64(ac, av, cmds);
+	if (cmds->mode == 2)
+		ret = ft_desecb(ac, av, cmds);
+	if (cmds->mode == 3)
+		ret = ft_descbc(ac, av, cmds);
+	free(cmds);
+	return (ret);
 }

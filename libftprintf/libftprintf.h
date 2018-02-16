@@ -16,7 +16,7 @@
 # include <stdlib.h>
 # include <stdarg.h>
 # include <inttypes.h>
-# include "libft/libft.h"
+# include "./libft/libft.h"
 
 typedef struct	s_params
 {

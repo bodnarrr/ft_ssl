@@ -21,14 +21,15 @@
 # define R28OF56(x)			((x) & 0xFFFFFFF)
 # define JOINBITS(x, y, sz)	((x << sz) | y)
 # define EIGHTED 			"\b\b\b\b\b\b\b\b"
+# define RDBS64				3
+# define RDDES				8
 
 # include <unistd.h>
-# include <stdlib.h>
 # include <fcntl.h>
 # include <sys/types.h>
 # include <stdio.h>
-# include <inttypes.h>
-# include "libftprintf.h"
+# include <stdbool.h>
+# include "libftprintf/libftprintf.h"
 
 typedef struct	s_desecb
 {
@@ -37,4 +38,26 @@ typedef struct	s_desecb
 	uint64_t	key;
 	uint64_t	vector;
 }				t_des;
+
+typedef struct	s_ssl_cmds
+{
+	uint		mode;
+	bool		encr;
+	bool		decr;
+	bool		in;
+	uint		inpos;
+	bool		out;
+	uint		outpos;
+	bool		key;
+	uint 		keypos;
+	bool		base64;
+	int			ret;
+	
+}				t_ssl_cmds;
+
+int				ft_print_usage(void);
+int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
+t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
+int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
+
 #endif
