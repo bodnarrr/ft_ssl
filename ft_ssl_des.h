@@ -52,6 +52,7 @@ typedef struct	s_ssl_cmds
 	uint 		keypos;
 	bool		base64;
 	int			ret;
+	uint		sz_bs64;
 	
 }				t_ssl_cmds;
 

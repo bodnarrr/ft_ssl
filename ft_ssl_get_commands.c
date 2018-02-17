@@ -33,6 +33,7 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 
 	cmds = (t_ssl_cmds*)malloc(sizeof(t_ssl_cmds));
 	ft_bzero(cmds, sizeof(t_ssl_cmds));
+	cmds->sz_bs64 = 0;
 	i = 2;
 	cmds->mode = ft_ssl_check_mode(av[1]);
 	while (i < ac)
