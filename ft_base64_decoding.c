@@ -38,6 +38,28 @@ char			*ft_base64_decode_block(char *str)
 	return (ret);
 }
 
+int				ft_base64_check_input(char *str)
+{
+	int			i;
+
+	ft_printf("buf = %s\n");
+	if (ft_strequ(str, "\n"))
+		return (2);
+	if (ft_strlen(str) != 4)
+		return (0);
+	while (*str)
+	{
+		i = -1;
+		while (++i < 64)
+			if (*str == g_base64[i] || *str == '=')
+				break ;
+		if (i == 64)
+			return (0);
+		str++;
+	}
+	return (1);
+}
+
 int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
 {
 	int			fd;
@@ -54,16 +76,21 @@ int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
 	while ((rd = read(fd, buf, BS64DE)) > 0)
 	{
 		buf[rd] = '\0';
-		if (ft_strequ(buf, "\n"))
-			break ;
-		ft_base64_join_block(&res, buf, cmds);
+		if (ft_base64_check_input(buf) == 1)
+			ft_base64_join_block(&res, buf, cmds);
+		else if (ft_base64_check_input(buf) == 2)
+			{
+				close(fd);
+				break ;
+			}
+		else
+		{
+			close(fd);
+			ft_printf("\nIncorrect input!\n");
+			ft_strdel(&res);
+			return (1);
+		}
 		ft_bzero(buf, BS64EN + 1);
-	}
-	if (rd != 0 && !ft_strequ(buf, "\n") && !close(fd))
-	{
-		ft_printf("\nIncorrect input!\n");
-		ft_strdel(&res);
-		return (1);
 	}
 	ft_base64_write(av, res, cmds);
 	return (*ret);

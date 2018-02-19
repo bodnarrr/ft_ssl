@@ -17,10 +17,12 @@ void			ft_base64_write(char **av, char *str, t_ssl_cmds *cmds)
 {
 	int			fd;
 
+	ft_printf("str in write = %s\n", str);
 	fd = 1;
 	if (cmds->out)
 		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
 	write(fd, str, cmds->sz_bs64);
+	write(fd, "\n", 1);
 	ft_strdel(&str);
 	close(fd);
 }
