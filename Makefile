@@ -13,7 +13,8 @@
 NAME = ft_ssl
 LIB = libftprintf.a
 
-SRCS = main.c ft_ssl_errors.c ft_base64.c ft_ssl_get_commands.c
+SRCS = main.c ft_ssl_errors.c ft_base64.c ft_ssl_get_commands.c \
+		ft_base64_encoding.c ft_base64_decoding.c
 
 OBJECTS = $(SRCS:.c=.o)
 
@@ -29,15 +30,9 @@ $(NAME): $(OBJECTS) $(LIB)
 $(LIB):
 	@make -C ./libftprintf/
 
-obj:
-	@mkdir obj/
-
-obj/%.o: ./src/%.c | obj
-	@$(CC) -c $(FLAGS) $< -o $@
-
 clean:
 	@make -C ./libftprintf/ fclean
-	@rm -rf obj/
+	@rm $(OBJECTS)
 
 fclean: clean
 	@rm -f $(NAME)

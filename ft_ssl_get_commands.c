@@ -33,14 +33,15 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 
 	cmds = (t_ssl_cmds*)malloc(sizeof(t_ssl_cmds));
 	ft_bzero(cmds, sizeof(t_ssl_cmds));
+	cmds->encr = 1;
 	cmds->sz_bs64 = 0;
-	i = 2;
+	i = 1;
 	cmds->mode = ft_ssl_check_mode(av[1]);
 	while (i < ac)
 	{
 		if (ft_strequ(av[i], "-e"))
 			cmds->encr = 1;
-		if (ft_strequ(av[i], "-d"))
+		if (ft_strequ(av[i], "-d") && (cmds->encr = 0) == 0)
 			cmds->decr = 1;
 		if ((ft_strequ(av[i], "-k") || ft_strequ(av[i], "-K")) && (cmds->key = 1) == 1)
 			cmds->keypos = i + 1;
