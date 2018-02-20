@@ -19,7 +19,7 @@ int			ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
 	ret = 0;
 	if (!cmds->decr)
 		ret = ft_desecb_encode(ac, av, cmds);
-	// else
-	// 	ft_desecb_decode(ac, av, cmds, &ret);
+	else
+		ret = ft_desecb_decode(ac, av, cmds, &ret);
 	return (ret);
 }
