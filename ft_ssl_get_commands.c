@@ -30,9 +30,9 @@ static uint		ft_ssl_check_mode(char *str)
 	mode = 0;
 	if (ft_strequ(str, "base64"))
 		mode = 1;
-	if (ft_strequ(str, "des-ecb"))
+	if (ft_strequ(str, "des") || ft_strequ(str, "des-ecb"))
 		mode = 2;
-	if (ft_strequ(str, "des") || ft_strequ(str, "des-cbc"))
+	if (ft_strequ(str, "des-cbc"))
 		mode = 3;
 	return (mode);
 }
