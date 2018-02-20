@@ -13,17 +13,18 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-void			ft_base64_write(char **av, char *str, t_ssl_cmds *cmds)
+void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds)
 {
 	int			fd;
 
 	fd = 1;
 	if (cmds->out)
 		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
-	write(fd, str, cmds->sz_bs64);
-	if (cmds->encr)
+	write(fd, *str, cmds->size_output);
+	if (cmds->encr && cmds->mode == 1)
 		write(fd, "\n", 1);
-	ft_strdel(&str);
+	ft_strdel(str);
+	*str = NULL;
 	close(fd);
 }
 
@@ -83,7 +84,7 @@ static void		ft_base64_join_block(char **res, char *buf, t_ssl_cmds *cmds)
 	ft_strdel(&fordel);
 }
 
-int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
+int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	int			fd;
 	int			rd;
@@ -104,9 +105,9 @@ int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
 		buf[rd] = '\0';
 		ft_base64_join_block(&res, buf, cmds);
 		ft_bzero(buf, BS64EN + 1);
-		cmds->sz_bs64 += 4;
+		cmds->size_output += 4;
 	}
 	close(fd);
-	ft_base64_write(av, res, cmds);
-	return (*ret);
+	ft_ssl_write(av, &res, cmds);
+	return (0);
 }

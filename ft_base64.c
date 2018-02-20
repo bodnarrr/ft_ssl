@@ -18,8 +18,8 @@ int			ft_base64(int ac, char **av, t_ssl_cmds *cmds)
 
 	ret = 0;
 	if (!cmds->decr)
-		ft_base64_encode(ac, av, cmds, &ret);
+		ret = ft_base64_encode(ac, av, cmds);
 	else
-		ft_base64_decode(ac, av, cmds, &ret);
+		ret = ft_base64_decode(ac, av, cmds);
 	return (ret);
 }

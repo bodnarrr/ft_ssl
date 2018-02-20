@@ -14,7 +14,8 @@ NAME = ft_ssl
 LIB = libftprintf.a
 
 SRCS = main.c ft_ssl_errors.c ft_base64.c ft_ssl_get_commands.c \
-		ft_base64_encoding.c ft_base64_decoding.c
+		ft_base64_encoding.c ft_base64_decoding.c ft_desecb.c \
+		ft_desecb_encoding.c
 
 OBJECTS = $(SRCS:.c=.o)
 

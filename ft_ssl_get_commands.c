@@ -12,6 +12,17 @@
 
 #include "ft_ssl_des.h"
 
+static void		ft_ssl_add_commands(char **av, t_ssl_cmds *cmds, int i)
+{
+	if (ft_strequ(av[i], "-a"))
+		cmds->base64 = 1;
+	if (ft_strequ(av[i], "-v"))
+	{
+		cmds->v = 1;
+		cmds->vpos = i + 1;
+	}
+}
+
 static uint		ft_ssl_check_mode(char *str)
 {
 	uint		mode;
@@ -48,8 +59,8 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 			cmds->inpos = i + 1;
 		if (ft_strequ(av[i], "-o") && (cmds->out = 1) == 1)
 			cmds->outpos = i + 1;
-		if (ft_strequ(av[i], "-a"))
-			cmds->base64 = 1;
+		if (ft_strequ(av[i], "-a") || ft_strequ(av[i], "-v"))
+			ft_ssl_add_commands(av, cmds, i);
 	}
 	return (cmds);
 }

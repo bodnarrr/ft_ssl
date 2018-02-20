@@ -46,14 +46,14 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 	char		*temp;
 
 	res = ft_strnew(0);
-	cmds->len_to_decode = ft_strlen(crypted);
-	while (cmds->len_decoded < cmds->len_to_decode)
+	cmds->len_to_code = ft_strlen(crypted);
+	while (cmds->len_coded < cmds->len_to_code)
 	{
-		if (*crypted == '\n' && (cmds->len_decoded % 64 == 0
+		if (*crypted == '\n' && (cmds->len_coded % 64 == 0
 			|| ft_strlen(crypted) == 1))
 		{
 			crypted++;
-			cmds->len_decoded += 1;
+			cmds->len_coded += 1;
 			continue ;
 		}
 		fordel = res;
@@ -62,8 +62,8 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 		ft_strdel(&fordel);
 		ft_strdel(&temp);
 		crypted += 4;
-		cmds->len_decoded += 4;
-		cmds->sz_bs64 += 3;
+		cmds->len_coded += 4;
+		cmds->size_output += 3;
 	}
 	return (res);
 }
@@ -95,7 +95,7 @@ static int		ft_base64_check_input(char *str)
 	return (1);
 }
 
-static char		*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
@@ -120,7 +120,7 @@ static char		*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 	return (res);
 }
 
-int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
+int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*for_work;
 	char		*decrypted;
@@ -135,6 +135,6 @@ int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
 		return (1);
 	}
 	decrypted = ft_base64_decode_all(for_work, cmds);
-	ft_base64_write(av, decrypted, cmds);
+	ft_ssl_write(av, &decrypted, cmds);
 	return (0);
 }

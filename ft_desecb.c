@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   ft_desecb.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/16 15:26:09 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/16 15:26:13 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/20 13:13:50 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/20 13:13:51 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
 
-int		main(int ac, char **av)
+int			ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
 {
-	char	buf[51];
-	int		rd;
-	int		fd;
+	int		ret;
 
-	fd = open("123", O_RDONLY);
-	rd = read(fd, buf, 50);
-	buf[rd] = '\0';
-	ft_printf("%s\n", buf);
+	ret = 0;
+	if (!cmds->decr)
+		ret = ft_desecb_encode(ac, av, cmds);
+	// else
+	// 	ft_desecb_decode(ac, av, cmds, &ret);
+	return (ret);
 }

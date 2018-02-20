@@ -51,21 +51,37 @@ typedef struct	s_ssl_cmds
 	uint		outpos;
 	bool		key;
 	uint		keypos;
+	bool		v;
+	uint		vpos;
 	bool		base64;
 	int			ret;
-	uint		sz_bs64;
-	uint		len_to_decode;
-	uint		len_decoded;
+	uint		size_output;
+	uint		len_to_code;
+	uint		len_coded;
 
 }				t_ssl_cmds;
 
 int				ft_print_usage(void);
 int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
 t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
-int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
-int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds, int *ret);
-void			ft_base64_write(char **av, char *str, t_ssl_cmds *cmds);
-int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret);
 
+int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds);
+void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds);
+int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds);
+
+int				ft_desecb(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_des_check_key(char *key);
+uint64_t		ft_key_to_bits(char *key);
+char			*ft_filled_by_len(char *input);
+char			*ft_desecb_encode_all(char *input, char *key, t_ssl_cmds *cmds);
+char			*ft_des_encode_block(char *input, uint64_t key);
+uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new_sz, int curr_sz);
+uint64_t		ft_input_to_bits(char *str);
+uint64_t		ft_shuffle_key(uint64_t key, uint8_t i);
+uint64_t		ft_s_boxes(uint64_t inf);
+char			*ft_string_from_bits(uint64_t inf);
 
 #endif
