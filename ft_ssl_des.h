@@ -54,6 +54,9 @@ typedef struct	s_ssl_cmds
 	bool		base64;
 	int			ret;
 	uint		sz_bs64;
+	uint		len_to_decode;
+	uint		len_decoded;
+
 }				t_ssl_cmds;
 
 int				ft_print_usage(void);
@@ -61,11 +64,8 @@ int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
 t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
 int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
 int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds, int *ret);
-void			ft_base64_join_block(char **res, char *buf, t_ssl_cmds *cmds);
-char			*ft_base64_encode_block(char *str);
-uint32_t		ft_str_to_32bits(char *str);
 void			ft_base64_write(char **av, char *str, t_ssl_cmds *cmds);
 int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds, int *ret);
-char			*ft_base64_decode_block(char *str);
+
 
 #endif

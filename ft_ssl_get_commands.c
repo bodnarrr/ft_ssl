@@ -34,10 +34,9 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 	cmds = (t_ssl_cmds*)malloc(sizeof(t_ssl_cmds));
 	ft_bzero(cmds, sizeof(t_ssl_cmds));
 	cmds->encr = 1;
-	cmds->sz_bs64 = 0;
-	i = 1;
+	i = -1;
 	cmds->mode = ft_ssl_check_mode(av[1]);
-	while (i < ac)
+	while (++i < ac)
 	{
 		if (ft_strequ(av[i], "-e"))
 			cmds->encr = 1;
@@ -51,7 +50,6 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 			cmds->outpos = i + 1;
 		if (ft_strequ(av[i], "-a"))
 			cmds->base64 = 1;
-		i++;
 	}
 	return (cmds);
 }

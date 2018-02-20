@@ -17,17 +17,17 @@ void			ft_base64_write(char **av, char *str, t_ssl_cmds *cmds)
 {
 	int			fd;
 
-	ft_printf("str in write = %s\n", str);
 	fd = 1;
 	if (cmds->out)
 		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
 	write(fd, str, cmds->sz_bs64);
-	write(fd, "\n", 1);
+	if (cmds->encr)
+		write(fd, "\n", 1);
 	ft_strdel(&str);
 	close(fd);
 }
 
-uint32_t		ft_str_to_32bits(char *str)
+static uint32_t	ft_str_to_32bits(char *str)
 {
 	int			i;
 	uint32_t	ret;
@@ -43,7 +43,7 @@ uint32_t		ft_str_to_32bits(char *str)
 	return (ret);
 }
 
-char			*ft_base64_encode_block(char *str)
+static char		*ft_base64_encode_block(char *str)
 {
 	uint32_t	conv;
 	int			i;
@@ -69,6 +69,18 @@ char			*ft_base64_encode_block(char *str)
 	if (sz < 2)
 		ret[2] = '=';
 	return (ret);
+}
+
+static void		ft_base64_join_block(char **res, char *buf, t_ssl_cmds *cmds)
+{
+	char		*temp;
+	char		*fordel;
+
+	temp = ft_base64_encode_block(buf);
+	fordel = *res;
+	*res = ft_strjoin(*res, temp);
+	ft_strdel(&temp);
+	ft_strdel(&fordel);
 }
 
 int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds, int *ret)
