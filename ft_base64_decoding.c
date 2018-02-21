@@ -81,7 +81,6 @@ static int		ft_base64_check_input(char *str)
 	{
 		if (!ft_strchr(g_base64, str[i]))
 		{
-			ft_printf("i = %d\n", i);
 			if ((i % 64 == 0 || i == len - 1) && str[i] == '\n')
 				j++;
 			else if (str[i] == '=' && (i == len - 1 || i == len - 2))
