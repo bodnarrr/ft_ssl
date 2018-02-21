@@ -14,12 +14,17 @@
 
 int			ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
 {
-	int		ret;
+	char	*res_str;
 
-	ret = 0;
 	if (!cmds->decr)
-		ret = ft_desecb_encode(ac, av, cmds);
-	else
-		ret = ft_desecb_decode(ac, av, cmds);
-	return (ret);
+		res_str = ft_desecb_encode(ac, av, cmds);
+	// else
+	// 	res_str = ft_desecb_decode(ac, av, cmds);
+	if (res_str == NULL)
+	{
+		ft_strdel(&res_str);
+		return (1);
+	}
+	ft_ssl_write(av, &res_str, cmds);
+	return (0);
 }

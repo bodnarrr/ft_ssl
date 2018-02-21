@@ -66,13 +66,13 @@ int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
 t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
 
 int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
-int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds);
 void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds);
-int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds);
 
 int				ft_desecb(int ac, char **av, t_ssl_cmds *cmds);
-int				ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
 int				ft_des_check_key(char *key);
 uint64_t		ft_key_to_bits(char *key);
 char			*ft_filled_by_len(char *input);

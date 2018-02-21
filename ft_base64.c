@@ -14,12 +14,17 @@
 
 int			ft_base64(int ac, char **av, t_ssl_cmds *cmds)
 {
-	int		ret;
+	char	*res_str;
 
-	ret = 0;
 	if (!cmds->decr)
-		ret = ft_base64_encode(ac, av, cmds);
+		res_str = ft_base64_encode(ac, av, cmds);
 	else
-		ret = ft_base64_decode(ac, av, cmds);
-	return (ret);
+		res_str = ft_base64_decode(ac, av, cmds);
+	if (res_str == NULL)
+	{
+		ft_strdel(&res_str);
+		return (1);
+	}
+	ft_ssl_write(av, &res_str, cmds);
+	return (0);
 }

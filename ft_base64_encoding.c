@@ -72,42 +72,41 @@ static char		*ft_base64_encode_block(char *str)
 	return (ret);
 }
 
-static void		ft_base64_join_block(char **res, char *buf, t_ssl_cmds *cmds)
+char			*ft_base64_encode_all(char *input, t_ssl_cmds *cmds)
 {
-	char		*temp;
-	char		*fordel;
-
-	temp = ft_base64_encode_block(buf);
-	fordel = *res;
-	*res = ft_strjoin(*res, temp);
-	ft_strdel(&temp);
-	ft_strdel(&fordel);
-}
-
-int				ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds)
-{
-	int			fd;
-	int			rd;
-	char		buf[BS64EN + 1];
 	char		*res;
+	char		*fordel;
+	char		*temp;
 
-	fd = 0;
-	if (cmds->in)
-		fd = open(av[cmds->inpos], O_RDONLY);
-	if (fd == -1)
+	if (cmds->base64)
 	{
-		ft_printf("No such file or directory\n");
-		return (1);
+		cmds->len_coded = 0;
+		cmds->len_to_code = 0;
 	}
 	res = ft_strnew(0);
-	while ((rd = read(fd, buf, BS64EN)) > 0)
+	cmds->len_to_code = ft_strlen(input);
+	while (cmds->len_coded < cmds->len_to_code)
 	{
-		buf[rd] = '\0';
-		ft_base64_join_block(&res, buf, cmds);
-		ft_bzero(buf, BS64EN + 1);
+		fordel = res;
+		temp = ft_base64_encode_block(input);
+		res = ft_strjoin(res, temp);
+		ft_strdel(&fordel);
+		ft_strdel(&temp);
+		input += 3;
+		cmds->len_coded += 3;
 		cmds->size_output += 4;
 	}
-	close(fd);
-	ft_ssl_write(av, &res, cmds);
-	return (0);
+	return (res);
+}
+
+char			*ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds)
+{
+	char		*for_work;
+	char		*encrypted;
+
+	for_work = ft_get_str(ac, av, cmds);
+	if (!for_work)
+		return (NULL);
+	encrypted = ft_base64_encode_all(for_work, cmds);
+	return (encrypted);
 }

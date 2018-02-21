@@ -13,7 +13,7 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-static char		*ft_base64_decode_block(char *str)
+static char		*ft_base64_decode_block(char *str, t_ssl_cmds *cmds)
 {
 	uint32_t	conv;
 	int			i;
@@ -36,17 +36,16 @@ static char		*ft_base64_decode_block(char *str)
 	i = -1;
 	while (++i < 3)
 		ret[i] = conv >> (24 - 8 * i) & 255;
+	cmds->size_output += ft_strlen(ret);
 	return (ret);
 }
 
-char			*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
+static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
 	char		*temp;
 
-	ft_printf("mode = %d\nencr = %d\ndecr = %d\nin = %d\ninpos = %d\nout = %d\noutpos = %d\nkey = %d\nkeypos = %d\nbase64 = %d\nsize_output = %d\n\n", cmds->mode, cmds->encr, cmds->decr, cmds->in, cmds->inpos, cmds->out, cmds->outpos, cmds->key, cmds->keypos, cmds->base64, cmds->size_output);
-	
 	res = ft_strnew(0);
 	cmds->len_to_code = ft_strlen(crypted);
 	while (cmds->len_coded < cmds->len_to_code)
@@ -59,13 +58,12 @@ char			*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 			continue ;
 		}
 		fordel = res;
-		temp = ft_base64_decode_block(crypted);
+		temp = ft_base64_decode_block(crypted, cmds);
 		res = ft_strjoin(res, temp);
 		ft_strdel(&fordel);
 		ft_strdel(&temp);
 		crypted += 4;
 		cmds->len_coded += 4;
-		cmds->size_output += 3;
 	}
 	return (res);
 }
@@ -83,9 +81,13 @@ static int		ft_base64_check_input(char *str)
 	{
 		if (!ft_strchr(g_base64, str[i]))
 		{
+			ft_printf("i = %d\n", i);
 			if ((i % 64 == 0 || i == len - 1) && str[i] == '\n')
 				j++;
 			else if (str[i] == '=' && (i == len - 1 || i == len - 2))
+				;
+			else if (str[i] == '=' && str[len - 1] == '\n'
+				&& (i == len - 2 || i == len - 3))
 				;
 			else
 				return (0);
@@ -122,21 +124,20 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 	return (res);
 }
 
-int				ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*for_work;
 	char		*decrypted;
 
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
-		return (1);
+		return (NULL);
 	if (!ft_base64_check_input(for_work))
 	{
 		ft_strdel(&for_work);
 		ft_printf("Incorrect input!\n");
-		return (1);
+		return (NULL);
 	}
 	decrypted = ft_base64_decode_all(for_work, cmds);
-	ft_ssl_write(av, &decrypted, cmds);
-	return (0);
+	return (decrypted);
 }

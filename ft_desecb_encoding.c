@@ -99,7 +99,7 @@ char			*ft_desecb_encode_all(char *input, char *key, t_ssl_cmds *cmds)
 	return (res);
 }
 
-int				ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
+char		*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char	*res;
 	char	*for_work;
@@ -113,13 +113,12 @@ int				ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
 	{
 		ft_strdel(&key);
 		ft_printf("Key is incorrect!\n");
-		return (1);
+		return (NULL);
 	}
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
-		return (1);
+		return (NULL);
 	res = ft_desecb_encode_all(for_work, key, cmds);
 	ft_strdel(&for_work);
-	ft_ssl_write(av, &res, cmds);
-	return (0);
+	return (res);
 }
