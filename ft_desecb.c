@@ -18,8 +18,8 @@ int			ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
 
 	if (!cmds->decr)
 		res_str = ft_desecb_encode(ac, av, cmds);
-	// else
-	// 	res_str = ft_desecb_decode(ac, av, cmds);
+	else
+		res_str = ft_desecb_decode(ac, av, cmds);
 	if (res_str == NULL)
 	{
 		ft_strdel(&res_str);
