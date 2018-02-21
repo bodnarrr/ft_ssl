@@ -1,25 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   ft_descheckkeys.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/16 15:26:09 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/16 15:26:13 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/20 18:26:21 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/20 18:26:22 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
+#include "ft_ssl_globals.h"
 
-int		main(int ac, char **av)
+int				ft_des_check_key(char *key)
 {
-	char	buf[51];
-	int		rd;
-	int		fd;
+	int			i;
+	const char	hex[16] = "0123456789ABCDEF";
 
-	fd = open("123", O_RDONLY);
-	rd = read(fd, buf, 50);
-	buf[rd] = '\0';
-	ft_printf("%s\n", buf);
+	if (ft_strlen(key) > 16)
+		return (0);
+	i = 0;
+	while (key[i])
+	{
+		if (!ft_strchr(hex, key[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

@@ -83,5 +83,7 @@ uint64_t		ft_input_to_bits(char *str);
 uint64_t		ft_shuffle_key(uint64_t key, uint8_t i);
 uint64_t		ft_s_boxes(uint64_t inf);
 char			*ft_string_from_bits(uint64_t inf);
+int				ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds);
+
 
 #endif

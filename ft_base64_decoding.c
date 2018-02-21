@@ -39,12 +39,14 @@ static char		*ft_base64_decode_block(char *str)
 	return (ret);
 }
 
-static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
+char			*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
 	char		*temp;
 
+	ft_printf("mode = %d\nencr = %d\ndecr = %d\nin = %d\ninpos = %d\nout = %d\noutpos = %d\nkey = %d\nkeypos = %d\nbase64 = %d\nsize_output = %d\n\n", cmds->mode, cmds->encr, cmds->decr, cmds->in, cmds->inpos, cmds->out, cmds->outpos, cmds->key, cmds->keypos, cmds->base64, cmds->size_output);
+	
 	res = ft_strnew(0);
 	cmds->len_to_code = ft_strlen(crypted);
 	while (cmds->len_coded < cmds->len_to_code)
