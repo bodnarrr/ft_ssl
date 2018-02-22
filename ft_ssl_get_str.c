@@ -16,7 +16,7 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
-	char		buf[11];
+	char		buf[BUFF_SSL + 1];
 	char		rd;
 	int			fd;
 
@@ -26,13 +26,14 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 	if (fd == -1 && ft_printf("No such file or directory\n"))
 		return (NULL);
 	res = ft_strnew(0);
-	while ((rd = read(fd, buf, 10)) > 0)
+	while ((rd = read(fd, buf, BUFF_SSL)) > 0)
 	{
 		buf[rd] = '\0';
+		cmds->len_to_code += rd;
 		fordel = res;
 		res = ft_strjoin(res, buf);
 		ft_strdel(&fordel);
-		ft_bzero(buf, 11);
+		ft_bzero(buf, BUFF_SSL);
 	}
 	return (res);
 }

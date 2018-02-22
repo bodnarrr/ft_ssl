@@ -24,6 +24,7 @@
 # define BS64EN				3
 # define BS64DE				4
 # define RDDES				8
+# define BUFF_SSL			64
 
 # include <unistd.h>
 # include <fcntl.h>
@@ -58,6 +59,7 @@ typedef struct	s_ssl_cmds
 	uint		size_output;
 	uint		len_to_code;
 	uint		len_coded;
+	bool		last_iter;
 
 }				t_ssl_cmds;
 

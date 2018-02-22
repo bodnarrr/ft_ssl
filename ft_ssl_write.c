@@ -1,38 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_des_join_block.c                                :+:      :+:    :+:   */
+/*   ft_ssl_write.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/22 14:18:28 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/22 14:18:28 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/22 19:10:47 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/22 19:10:47 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
 
-char		*ft_des_join_block(char *curr, char *block, t_ssl_cmds *cmds)
+void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds)
 {
-	char	*res;
-	char	*ret;
-	int		i;
+	int			fd;
 
-	res = ft_strnew(cmds->size_output + 8);
-	ret = res;
-	i = -1;
-	while (++i < cmds->size_output)
-	{
-		*res = *curr;
-		res++;
-		curr++;
-	}
-	i = -1;
-	while (++i < 8)
-	{
-		*res = *block;
-		res++;
-		block++;
-	}
-	return (ret);
+	// ft_printf("output = %d\n", cmds->size_output);
+	fd = 1;
+	if (cmds->out)
+		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
+	write(fd, *str, cmds->size_output);
+	if (cmds->encr && cmds->mode == 1)
+		write(fd, "\n", 1);
+	ft_strdel(str);
+	*str = NULL;
+	close(fd);
 }

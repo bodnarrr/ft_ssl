@@ -13,21 +13,6 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds)
-{
-	int			fd;
-
-	fd = 1;
-	if (cmds->out)
-		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
-	write(fd, *str, cmds->size_output);
-	if (cmds->encr && cmds->mode == 1)
-		write(fd, "\n", 1);
-	ft_strdel(str);
-	*str = NULL;
-	close(fd);
-}
-
 static uint32_t	ft_str_to_32bits(char *str)
 {
 	int			i;
@@ -81,10 +66,9 @@ char			*ft_base64_encode_all(char *input, t_ssl_cmds *cmds)
 	if (cmds->base64)
 	{
 		cmds->len_coded = 0;
-		cmds->len_to_code = 0;
+		cmds->len_to_code = cmds->size_output;
 	}
 	res = ft_strnew(0);
-	cmds->len_to_code = ft_strlen(input);
 	while (cmds->len_coded < cmds->len_to_code)
 	{
 		fordel = res;

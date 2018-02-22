@@ -47,7 +47,6 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 	char		*temp;
 
 	res = ft_strnew(0);
-	cmds->len_to_code = ft_strlen(crypted);
 	while (cmds->len_coded < cmds->len_to_code)
 	{
 		if (*crypted == '\n' && (cmds->len_coded % 65 == 64

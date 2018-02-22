@@ -21,10 +21,13 @@ char			*ft_string_from_bits_r(uint64_t inf, t_ssl_cmds *cmds)
 	int			i;
 
 	size = 8;
-	if ((inf & 255) > 1 && (inf & 255) < 9)
-		size = 8 - (inf & 255);
-	if (size == 0)
-		return (ft_strdup("\0"));
+	if (cmds->last_iter)
+	{
+		if ((inf & 255) > 1 && (inf & 255) < 9)
+			size = 8 - (inf & 255);
+		if (size == 0)
+			return (ft_strdup("\0"));
+	}
 	cmds->size_output += size;
 	res = ft_strnew(size);
 	i = -1;
@@ -65,6 +68,7 @@ char			*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 
 	i = -1;
 	conv = ft_input_to_bits(in);
+	ft_printf("conv = %.16llX\n", conv);
 	conv = ft_des_permut(conv, g_initial_shuffle, 64, 64);
 	key = ft_des_permut(key, g_pc1, 56, 64);
 	key = ft_shuffle_key(key, 1);
@@ -81,6 +85,7 @@ char			*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 		conv = JOINBITS(left_new, right, 32);
 	}
 	conv = (R32OF64(conv) << 32) | (L32OF64(conv));
+	ft_printf("res = %.16llX\n", ft_des_permut(conv, g_finish, 64, 64));
 	return (ft_string_from_bits_r(ft_des_permut(conv, g_finish, 64, 64), cmd));
 }
 
@@ -91,26 +96,29 @@ char			*ft_desecb_decode_all(char *input, char *key, t_ssl_cmds *cmds)
 	char		*fordel;
 	uint64_t	bit_key;
 
+	int i = 0;
+
 	res = ft_strnew(0);
 	bit_key = ft_key_to_bits(key);
-	while (*input)
+	while (cmds->len_coded < cmds->len_to_code)
 	{
+		if (cmds->len_to_code - cmds->len_coded <= 8)
+			cmds->last_iter = 1;
 		temp = ft_desecb_decode_block(input, bit_key, cmds);
 		fordel = res;
 		res = ft_strjoin(res, temp);
 		ft_strdel(&temp);
 		ft_strdel(&fordel);
 		input += 8;
+		cmds->len_coded += 8;
+		i++;
 	}
 	return (res);
 }
 
-static int		ft_desecb_check_input(char *input)
+static int		ft_desecb_check_input(t_ssl_cmds *cmds)
 {
-	size_t		len;
-
-	len = ft_strlen(input);
-	if (len % 8 != 0)
+	if (cmds->len_to_code % 8 != 0)
 		return (0);
 	return (1);
 }
@@ -133,7 +141,7 @@ char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
-	if (!ft_desecb_check_input(for_work) && ft_printf("Incorrect input!\n"))
+	if (!ft_desecb_check_input(cmds) && ft_printf("Incorrect input!\n"))
 	{
 		ft_strdel(&for_work);
 		return (NULL);
