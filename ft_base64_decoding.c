@@ -50,7 +50,7 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 	cmds->len_to_code = ft_strlen(crypted);
 	while (cmds->len_coded < cmds->len_to_code)
 	{
-		if (*crypted == '\n' && (cmds->len_coded % 64 == 0
+		if (*crypted == '\n' && (cmds->len_coded % 65 == 64
 			|| ft_strlen(crypted) == 1))
 		{
 			crypted++;
@@ -81,7 +81,7 @@ static int		ft_base64_check_input(char *str)
 	{
 		if (!ft_strchr(g_base64, str[i]))
 		{
-			if ((i % 64 == 0 || i == len - 1) && str[i] == '\n')
+			if ((i % 65 == 64 || i == len - 1) && str[i] == '\n')
 				j++;
 			else if (str[i] == '=' && (i == len - 1 || i == len - 2))
 				;
@@ -96,31 +96,6 @@ static int		ft_base64_check_input(char *str)
 	if ((len - j) % 4 != 0)
 		return (0);
 	return (1);
-}
-
-char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
-{
-	char		*res;
-	char		*fordel;
-	char		buf[11];
-	char		rd;
-	int			fd;
-
-	fd = 0;
-	if (cmds->in)
-		fd = open(av[cmds->inpos], O_RDONLY);
-	if (fd == -1 && ft_printf("No such file or directory\n"))
-		return (NULL);
-	res = ft_strnew(0);
-	while ((rd = read(fd, buf, 10)) > 0)
-	{
-		buf[rd] = '\0';
-		fordel = res;
-		res = ft_strjoin(res, buf);
-		ft_strdel(&fordel);
-		ft_bzero(buf, 11);
-	}
-	return (res);
 }
 
 char			*ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds)
