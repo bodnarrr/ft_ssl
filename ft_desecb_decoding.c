@@ -65,9 +65,7 @@ char			*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 
 	i = -1;
 	conv = ft_input_to_bits(in);
-	conv = 0x85E813540F0AB405;
 	conv = ft_des_permut(conv, g_initial_shuffle, 64, 64);
-	key = 0x133457799BBCDFF1;
 	key = ft_des_permut(key, g_pc1, 56, 64);
 	key = ft_shuffle_key(key, 1);
 	while (++i < 16)
@@ -83,7 +81,6 @@ char			*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 		conv = JOINBITS(left_new, right, 32);
 	}
 	conv = (R32OF64(conv) << 32) | (L32OF64(conv));
-	ft_printf("res = %.64b\n", ft_des_permut(conv, g_finish, 64, 64));
 	return (ft_string_from_bits_r(ft_des_permut(conv, g_finish, 64, 64), cmd));
 }
 
