@@ -88,10 +88,11 @@ char			*ft_desecb_encode_all(char *input, char *key, t_ssl_cmds *cmds)
 		for_work = ft_filled_by_len(input);
 		temp = ft_des_encode_block(for_work, bit_key);
 		fordel = res;
-		res = ft_strjoin(res, temp);
+		res = ft_des_join_block(res, temp, cmds);
 		ft_strdel(&temp);
 		ft_strdel(&for_work);
 		ft_strdel(&fordel);
+		// ft_printf("sz of res = %zu\n", ft_strlen(res));
 		cmds->len_coded += 8;
 		input += 8;
 		cmds->size_output +=8;
