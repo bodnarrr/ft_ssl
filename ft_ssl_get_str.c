@@ -29,9 +29,9 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 	while ((rd = read(fd, buf, BUFF_SSL)) > 0)
 	{
 		buf[rd] = '\0';
-		cmds->len_to_code += rd;
 		fordel = res;
-		res = ft_strjoin(res, buf);
+		res = ft_ssl_join_block(res, buf, cmds->len_to_code, rd);
+		cmds->len_to_code += rd;
 		ft_strdel(&fordel);
 		ft_bzero(buf, BUFF_SSL);
 	}

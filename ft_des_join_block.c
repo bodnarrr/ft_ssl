@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ssl_join_block.c                                :+:      :+:    :+:   */
+/*   ft_des_join_block.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/23 11:57:30 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/23 11:57:31 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/22 14:18:28 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/22 14:18:28 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
 
-char		*ft_ssl_join_block(char *str, char *block, int sz1, int sz2)
+char		*ft_des_join_block(char *curr, char *block, t_ssl_cmds *cmds)
 {
 	char	*res;
 	char	*ret;
+	int		i;
 
-	res = ft_strnew(sz1 + sz2);
+	res = ft_strnew(cmds->size_output + 8);
 	ret = res;
-	while(sz1--)
+	i = -1;
+	while (++i < cmds->size_output)
 	{
-		*res = *str;
+		*res = *curr;
 		res++;
-		str++; 
+		curr++;
 	}
-	while(sz2--)
+	i = -1;
+	while (++i < 8)
 	{
 		*res = *block;
 		res++;

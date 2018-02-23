@@ -40,7 +40,6 @@ char			*ft_string_from_bits(uint64_t inf)
 	uint8_t		temp;
 	int			i;
 
-	// ft_printf("%.64b\n", inf);
 	res = ft_strnew(8);
 	i = -1;
 	while (++i < 8)
@@ -48,10 +47,7 @@ char			*ft_string_from_bits(uint64_t inf)
 		temp = (inf >> (56 - i * 8)) & 255;
 		res[i] = temp;
 	}
-	// ft_printf("sz of blc = %zu\n", ft_strlen(res));
 	i = -1;
-	// while (++i < 8)
-	// 	ft_printf("%.8b\n", res[i]);
 	return (res);
 }
 

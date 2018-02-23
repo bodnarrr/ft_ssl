@@ -87,6 +87,8 @@ uint64_t		ft_s_boxes(uint64_t inf);
 char			*ft_string_from_bits(uint64_t inf);
 char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_des_join_block(char *curr, char *block, t_ssl_cmds *cmds);
+char			*ft_ssl_join_block(char *str, char *block, int sz1, int sz2);
+
 
 
 #endif
