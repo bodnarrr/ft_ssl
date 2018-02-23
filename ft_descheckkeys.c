@@ -16,7 +16,7 @@
 int				ft_des_check_key(char *key)
 {
 	int			i;
-	const char	hex[16] = "0123456789ABCDEF";
+	const char	hex[22] = "0123456789ABCDEFabcdef";
 
 	if (ft_strlen(key) > 16)
 		return (0);

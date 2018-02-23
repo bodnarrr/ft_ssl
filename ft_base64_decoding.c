@@ -13,6 +13,18 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
+static int		ft_block_size(char *str)
+{
+	int			ret;
+
+	ret = 3;
+	if (str[3] == '=')
+		ret--;
+	if (str[2] == '=')
+		ret--;
+	return (ret);
+}
+
 static char		*ft_base64_decode_block(char *str, t_ssl_cmds *cmds)
 {
 	uint32_t	conv;
@@ -36,7 +48,7 @@ static char		*ft_base64_decode_block(char *str, t_ssl_cmds *cmds)
 	i = -1;
 	while (++i < 3)
 		ret[i] = conv >> (24 - 8 * i) & 255;
-	cmds->size_output += ft_strlen(ret);
+	cmds->bs64block = ft_block_size(str);
 	return (ret);
 }
 
@@ -58,7 +70,8 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 		}
 		fordel = res;
 		temp = ft_base64_decode_block(crypted, cmds);
-		res = ft_strjoin(res, temp);
+		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->bs64block);
+		cmds->size_output += cmds->bs64block;
 		ft_strdel(&fordel);
 		ft_strdel(&temp);
 		crypted += 4;

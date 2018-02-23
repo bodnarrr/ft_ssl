@@ -73,7 +73,7 @@ char			*ft_base64_encode_all(char *input, t_ssl_cmds *cmds)
 	{
 		fordel = res;
 		temp = ft_base64_encode_block(input);
-		res = ft_strjoin(res, temp);
+		res = ft_ssl_join_block(res, temp, cmds->size_output, 4);
 		ft_strdel(&fordel);
 		ft_strdel(&temp);
 		input += 3;

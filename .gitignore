@@ -6,3 +6,5 @@ encrypt
 decrypt
 crypted_andrew
 test
+*.sh
+ft_ssl

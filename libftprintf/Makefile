@@ -42,6 +42,6 @@ fclean: clean
 	@make fclean -C libft/
 	@/bin/rm -f libft.a
 	@/bin/rm -f $(NAME)
-	@echo "\033[0;32mlibftprintf.a was removed"
+	@echo "\033[0;32mlibftprintf.a was removed\033[0m"
 
 re: fclean all
