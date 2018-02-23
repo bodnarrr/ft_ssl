@@ -48,7 +48,7 @@ static char		*ft_base64_decode_block(char *str, t_ssl_cmds *cmds)
 	i = -1;
 	while (++i < 3)
 		ret[i] = conv >> (24 - 8 * i) & 255;
-	cmds->bs64block = ft_block_size(str);
+	cmds->curr_block = ft_block_size(str);
 	return (ret);
 }
 
@@ -70,8 +70,8 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 		}
 		fordel = res;
 		temp = ft_base64_decode_block(crypted, cmds);
-		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->bs64block);
-		cmds->size_output += cmds->bs64block;
+		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->curr_block);
+		cmds->size_output += cmds->curr_block;
 		ft_strdel(&fordel);
 		ft_strdel(&temp);
 		crypted += 4;

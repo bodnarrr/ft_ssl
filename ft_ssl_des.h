@@ -60,7 +60,7 @@ typedef struct	s_ssl_cmds
 	uint		len_to_code;
 	uint		len_coded;
 	bool		last_iter;
-	uint		bs64block;
+	uint		curr_block;
 
 }				t_ssl_cmds;
 

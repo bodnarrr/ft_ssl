@@ -23,7 +23,7 @@ uint64_t		ft_input_to_bits(char *str)
 	while (++i < 8)
 	{
 		res <<= 8;
-		res = res | *(str + i);
+		res = res | (*(str + i) & 255);
 	}
 	return (res);
 }
@@ -53,7 +53,7 @@ char			*ft_des_encode_block(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
-	// ft_printf("conv = %lld\nkey = %lld\n", converted, key);
+	// ft_printf("con = %.16llX\nkey = %llX\n", converted, key);
 	converted = ft_des_permut(converted, g_initial_shuffle, 64, 64);
 	key = ft_des_permut(key, g_pc1, 56, 64);
 	while (++i < 16)
@@ -89,7 +89,7 @@ char			*ft_desecb_encode_all(char *input, char *key, t_ssl_cmds *cmds)
 		for_work = ft_filled_by_len(input);
 		temp = ft_des_encode_block(for_work, bit_key);
 		fordel = res;
-		res = ft_des_join_block(res, temp, cmds);
+		res = ft_ssl_join_block(res, temp, cmds->len_coded, 8);
 		ft_strdel(&temp);
 		ft_strdel(&for_work);
 		ft_strdel(&fordel);
