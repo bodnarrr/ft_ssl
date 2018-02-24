@@ -86,15 +86,15 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
 		iv = getpass("Enter 64-bit vector in HEX: ");
 	if (!ft_des_check_key(key))
 	{
-		ft_strdel(&key);
-		ft_strdel(&iv);
+		// ft_strdel(&key);
+		// ft_strdel(&iv);
 		ft_printf("Key is incorrect!\n");
 		return (NULL);
 	}
 	if (!ft_des_check_key(iv))
 	{
-		ft_strdel(&key);
-		ft_strdel(&iv);
+		// ft_strdel(&key);
+		// ft_strdel(&iv);
 		ft_printf("Vector is incorrect!\n");
 		return (NULL);
 	}

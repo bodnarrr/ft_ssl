@@ -89,7 +89,6 @@ uint64_t		ft_key_to_bits(char *key)
 				res = res | (key[i] - 87);
 		}
 	}
-	ft_strdel(&key);
 	return (res);
 }
 

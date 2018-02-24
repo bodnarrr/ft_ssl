@@ -80,7 +80,7 @@ char			*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
 int				ft_des_check_key(char *key);
 uint64_t		ft_key_to_bits(char *key);
 char			*ft_filled_by_len(char *input);
-uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new_sz, int curr_sz);
+uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new, int curr);
 uint64_t		ft_input_to_bits(char *str);
 uint64_t		ft_shuffle_key(uint64_t key, uint8_t i);
 uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i);
