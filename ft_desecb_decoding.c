@@ -117,7 +117,7 @@ char			*ft_desecb_decode_all(char *input, char *key, t_ssl_cmds *cmds)
 			temp = ft_des_clear_last_block(&temp, cmds);
 		if (temp == NULL)
 		{
-			ft_strdel(res);
+			ft_strdel(&res);
 			return (NULL);
 		}
 		fordel = res;
