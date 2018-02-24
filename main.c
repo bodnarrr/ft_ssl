@@ -13,19 +13,6 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-// int		ft_base64(int ac, char **av, t_ssl_cmds *cmds)
-// {
-// 	ft_printf("base64 working\n");
-// 	return (1);
-// }
-
-int		ft_descbc(int ac, char **av, t_ssl_cmds *cmds)
-{
-	ft_printf("descbc working\n");
-	return (1);
-}
-
-
 int		main(int ac, char **av)
 {
 	t_ssl_cmds	*cmds;

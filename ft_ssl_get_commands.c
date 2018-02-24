@@ -18,8 +18,8 @@ static void		ft_ssl_add_commands(char **av, t_ssl_cmds *cmds, int i)
 		cmds->base64 = 1;
 	if (ft_strequ(av[i], "-v"))
 	{
-		cmds->v = 1;
-		cmds->vpos = i + 1;
+		cmds->iv = 1;
+		cmds->ivpos = i + 1;
 	}
 }
 
