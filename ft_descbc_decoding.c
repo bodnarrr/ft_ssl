@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_descbc_encoding.c                               :+:      :+:    :+:   */
+/*   ft_descbc_decoding.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/24 16:50:32 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/24 16:50:33 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/26 13:55:16 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/26 13:55:17 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-char			*ft_descbc_encode_block(char *input, uint64_t key, uint64_t iv)
+static char		*ft_descbc_decode_block(char *in, uint64_t key, uint64_t vect,
+				t_ssl_cmds *cmd)
 {
 	uint64_t	conv;
 	int			i;
@@ -22,58 +23,69 @@ char			*ft_descbc_encode_block(char *input, uint64_t key, uint64_t iv)
 	uint64_t	right;
 
 	i = -1;
-	conv = ft_input_to_bits(input);
-	// ft_printf("conv = %.16llX\nkey = %.16llX\nvector = %.16llX\n", conv, key, iv);
-	conv ^= iv;
+	conv = ft_input_to_bits(in);
+	cmd->vect_new = conv;
+	// ft_printf("conv = %.16llX\nkey = %.16llX\nvector = %.16llX\n", conv, key, vect);
 	conv = ft_des_permut(conv, g_initial_shuffle, 64, 64);
 	key = ft_des_permut(key, g_pc1, 56, 64);
+	key = ft_shuffle_key(key, 1);
 	while (++i < 16)
 	{
 		left = L32OF64(conv);
 		left_new = R32OF64(conv);
 		right = R32OF64(conv);
 		right = ft_des_permut(right, g_expand_right, 48, 32);
-		key = ft_shuffle_key(key, g_key_shift[i]);
-		right ^= ft_des_permut(key, g_pc2, 48, 56);
+		key = ft_shuffle_key_rev(key, g_key_shift[i]);
+		right = right ^ ft_des_permut(key, g_pc2, 48, 56);
 		right = ft_des_permut(ft_s_boxes(right), g_p_permut, 32, 32);
-		right ^= left;
+		right = right ^ left;
 		conv = JOINBITS(left_new, right, 32);
 	}
 	conv = (R32OF64(conv) << 32) | (L32OF64(conv));
-	// ft_printf("res = %.16llX\n", ft_des_permut(conv, g_finish, 64, 64)); 
-	return (ft_string_from_bits(ft_des_permut(conv, g_finish, 64, 64)));
+	// ft_printf("res = %.16llX\n", ft_des_permut(conv, g_finish, 64, 64) ^ vect); 
+	return (ft_string_from_bits_r(ft_des_permut(conv, g_finish, 64, 64) ^ vect, cmd));
 }
 
-char			*ft_descbc_encode_all(char *input, char *key, char *iv,
+static char		*ft_descbc_decode_all(char *input, char *key, char *iv,
 				t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*temp;
 	char		*fordel;
-	char		*for_work;
 	uint64_t	bit_key;
+	uint64_t 	bit_vector;
 
 	res = ft_strnew(0);
 	bit_key = ft_key_to_bits(key);
-	cmds->vector = ft_key_to_bits(iv);
-	while (cmds->len_coded <= cmds->len_to_code)
+	bit_vector = ft_key_to_bits(iv);
+	while (cmds->len_coded < cmds->len_to_code)
 	{
-		for_work = ft_filled_by_len(input);
-		temp = ft_descbc_encode_block(for_work, bit_key, cmds->vector);
+		if (cmds->len_to_code - cmds->len_coded == 8)
+			cmds->last_iter = 1;
+		if (cmds->len_coded == 0)
+			temp = ft_descbc_decode_block(input, bit_key, bit_vector, cmds);
+		else
+			temp = ft_descbc_decode_block(input, bit_key, cmds->vect_new, cmds);
+		if (cmds->last_iter)
+			temp = ft_des_clear_last_block(&temp, cmds);
+		if (temp == NULL)
+		{
+			ft_strdel(&res);
+			return (NULL);
+		}
 		cmds->vector = ft_descbc_make_vector(temp);
 		fordel = res;
-		res = ft_ssl_join_block(res, temp, cmds->len_coded, 8);
+		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->curr_block);
 		ft_strdel(&temp);
-		ft_strdel(&for_work);
 		ft_strdel(&fordel);
-		cmds->len_coded += 8;
+		cmds->size_output += cmds->curr_block;
 		input += 8;
-		cmds->size_output += 8;
+		cmds->len_coded += 8;
 	}
 	return (res);
 }
 
-char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*for_work;
@@ -95,7 +107,12 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
-	res = ft_descbc_encode_all(for_work, key, iv, cmds);
+	if (cmds->len_to_code % 8 != 0 && ft_printf("Incorrect input!\n"))
+	{
+		ft_strdel(&for_work);
+		return (NULL);
+	}
+	res = ft_descbc_decode_all(for_work, key, iv, cmds);
 	ft_strdel(&for_work);
 	return (res);
 }

@@ -19,11 +19,7 @@ int			ft_descbc(int ac, char **av, t_ssl_cmds *cmds)
 	if (!cmds->decr)
 		res_str = ft_descbc_encode(ac, av, cmds);
 	else
-	{
-		res_str = ft_strdup("cbc decode");
-		cmds->size_output = ft_strlen(res_str);
-		// res_str = ft_descbc_decode(ac, av, cmds);
-	}
+		res_str = ft_descbc_decode(ac, av, cmds);
 	if (res_str == NULL)
 	{
 		ft_strdel(&res_str);
@@ -32,4 +28,3 @@ int			ft_descbc(int ac, char **av, t_ssl_cmds *cmds)
 	ft_ssl_write(av, &res_str, cmds);
 	return (0);
 }
-

@@ -55,6 +55,7 @@ typedef struct	s_ssl_cmds
 	bool		iv;
 	uint		ivpos;
 	uint64_t	vector;
+	uint64_t	vect_new;
 	bool		base64;
 	int			ret;
 	uint		size_output;

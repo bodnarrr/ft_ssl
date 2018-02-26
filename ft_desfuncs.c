@@ -13,6 +13,23 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
+char			*ft_des_clear_last_block(char **block, t_ssl_cmds *cmds)
+{
+	int			new_size;
+	char		*ret;
+
+	if ((*block)[7] > 8 || (*block)[7] < 1)
+	{
+		ft_strdel(block);
+		return (NULL);
+	}
+	new_size = 8 - (*block)[7];
+	cmds->curr_block = new_size;
+	ret = ft_strsub(*block, 0, new_size);
+	ft_strdel(block);
+	return (ret);
+}
+
 char			*ft_filled_by_len(char *input)
 {
 	size_t		len;
@@ -64,30 +81,6 @@ uint64_t		ft_s_boxes(uint64_t inf)
 		res <<= 4;
 		temp = inf >> (42 - i * 6) & 63;
 		res = res | g_six_to_four[i][(CENTR4OF6(temp)) | ((FL2OF6(temp)) << 4)];
-	}
-	return (res);
-}
-
-uint64_t		ft_key_to_bits(char *key)
-{
-	uint64_t	res;
-	int			i;
-	int			temp;
-
-	res = 0;
-	i = -1;
-	while (++i < 16)
-	{
-		res <<= 4;
-		if (key[i])
-		{
-			if (key[i] >= '0' && key[i] <= '9')
-				res = res | (key[i] - '0');
-			if (key[i] >= 'A' && key[i] <= 'F')
-				res = res | (key[i] - 55);
-			if (key[i] >= 'a' && key[i] <= 'f')
-				res = res | (key[i] - 87);
-		}
 	}
 	return (res);
 }

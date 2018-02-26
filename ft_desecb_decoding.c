@@ -13,23 +13,6 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-char			*ft_des_clear_last_block(char **block, t_ssl_cmds *cmds)
-{
-	int			new_size;
-	char		*ret;
-
-	if ((*block)[7] > 8 || (*block)[7] < 1)
-	{
-		ft_strdel(block);
-		return (NULL);
-	}
-	new_size = 8 - (*block)[7];
-	cmds->curr_block = new_size;
-	ret = ft_strsub(*block, 0, new_size);
-	ft_strdel(block);
-	return (ret);
-}
-
 char			*ft_string_from_bits_r(uint64_t inf, t_ssl_cmds *cmds)
 {
 	char		*res;
@@ -129,13 +112,6 @@ static char		*ft_desecb_decode_all(char *input, char *key, t_ssl_cmds *cmds)
 	return (res);
 }
 
-int				ft_des_check_input(t_ssl_cmds *cmds)
-{
-	if (cmds->len_to_code % 8 != 0)
-		return (0);
-	return (1);
-}
-
 char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
@@ -151,7 +127,7 @@ char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
-	if (!ft_des_check_input(cmds) && ft_printf("Incorrect input!\n"))
+	if (cmds->len_to_code % 8 != 0 && ft_printf("Incorrect input!\n"))
 	{
 		ft_strdel(&for_work);
 		return (NULL);
