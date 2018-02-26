@@ -42,6 +42,7 @@ $(LIB):
 clean:
 	@make fclean -C ./libftprintf
 	@rm -f *.o
+	@rm -f libftprintf.a
 	@echo "\033[1;32mObject files ft_ssl were removed\033[0m"
 
 fclean: clean
