@@ -54,6 +54,7 @@ typedef struct	s_ssl_cmds
 	uint		keypos;
 	bool		iv;
 	uint		ivpos;
+	uint64_t	vector;
 	bool		base64;
 	int			ret;
 	uint		size_output;
@@ -94,6 +95,7 @@ char			*ft_des_clear_last_block(char **block, t_ssl_cmds *cmds);
 int				ft_descbc(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds);
+uint64_t		ft_descbc_make_vector(char *str);
 
 
 

@@ -1,35 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_descbc.c                                        :+:      :+:    :+:   */
+/*   ft_descbc_make_vector.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abodnar <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/24 16:48:46 by abodnar           #+#    #+#             */
-/*   Updated: 2018/02/24 16:48:46 by abodnar          ###   ########.fr       */
+/*   Created: 2018/02/26 12:46:05 by abodnar           #+#    #+#             */
+/*   Updated: 2018/02/26 12:46:06 by abodnar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_des.h"
 
-int			ft_descbc(int ac, char **av, t_ssl_cmds *cmds)
+uint64_t		ft_descbc_make_vector(char *str)
 {
-	char	*res_str;
+	int			i;
+	uint64_t	res;
 
-	if (!cmds->decr)
-		res_str = ft_descbc_encode(ac, av, cmds);
-	else
+	res = 0;
+	i = -1;
+	while (++i < 8)
 	{
-		res_str = ft_strdup("cbc decode");
-		cmds->size_output = ft_strlen(res_str);
-		// res_str = ft_descbc_decode(ac, av, cmds);
+		res <<= 8;
+		res |= (str[i] & 255);
 	}
-	if (res_str == NULL)
-	{
-		ft_strdel(&res_str);
-		return (1);
-	}
-	ft_ssl_write(av, &res_str, cmds);
-	return (0);
+	return (res);
 }
-

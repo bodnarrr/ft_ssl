@@ -53,10 +53,12 @@ char			*ft_descbc_encode_all(char *input, char *key, char *iv,
 
 	res = ft_strnew(0);
 	bit_key = ft_key_to_bits(key);
+	cmds->vector = ft_key_to_bits(iv);
 	while (cmds->len_coded <= cmds->len_to_code)
 	{
 		for_work = ft_filled_by_len(input);
-		temp = ft_descbc_encode_block(for_work, bit_key, ft_key_to_bits(iv));
+		temp = ft_descbc_encode_block(for_work, bit_key, cmds->vector);
+		cmds->vector = ft_descbc_make_vector(temp);
 		fordel = res;
 		res = ft_ssl_join_block(res, temp, cmds->len_coded, 8);
 		ft_strdel(&temp);
@@ -76,28 +78,18 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
 	char		*key;
 	char		*iv;
 
-	if (cmds->key)
+	if (cmds->key && av[cmds->keypos])
 		key = ft_strdup(av[cmds->keypos]);
 	else
 		key = getpass("Enter 64-bit key in HEX: ");
-	if (cmds->iv)
+	if (cmds->iv && av[cmds->ivpos])
 		iv = ft_strdup(av[cmds->ivpos]);
 	else
 		iv = getpass("Enter 64-bit vector in HEX: ");
-	if (!ft_des_check_key(key))
-	{
-		// ft_strdel(&key);
-		// ft_strdel(&iv);
-		ft_printf("Key is incorrect!\n");
+	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
 		return (NULL);
-	}
-	if (!ft_des_check_key(iv))
-	{
-		// ft_strdel(&key);
-		// ft_strdel(&iv);
-		ft_printf("Vector is incorrect!\n");
+	if (!ft_des_check_key(iv) && ft_printf("Vector is incorrect!\n"))
 		return (NULL);
-	}
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);

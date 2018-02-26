@@ -21,7 +21,7 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 	int			fd;
 
 	fd = 0;
-	if (cmds->in)
+	if (cmds->in && av[cmds->inpos])
 		fd = open(av[cmds->inpos], O_RDONLY);
 	if (fd == -1 && ft_printf("No such file or directory\n"))
 		return (NULL);

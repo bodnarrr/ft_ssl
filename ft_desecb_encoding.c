@@ -110,12 +110,8 @@ char		*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
 		key = ft_strdup(av[cmds->keypos]);
 	else
 		key = getpass("Enter 64-bit key in HEX: ");
-	if (!ft_des_check_key(key))
-	{
-		ft_strdel(&key);
-		ft_printf("Key is incorrect!\n");
+	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
 		return (NULL);
-	}
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);

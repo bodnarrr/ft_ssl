@@ -147,10 +147,7 @@ char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 	else
 		key = getpass("Enter 64-bit key in HEX: ");
 	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
-	{
-		ft_strdel(&key);
 		return (NULL);
-	}
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
