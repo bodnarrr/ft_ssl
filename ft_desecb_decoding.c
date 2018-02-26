@@ -92,7 +92,7 @@ static char		*ft_base_for_ecb(char **for_work, t_ssl_cmds *cmds)
 	return (res);
 }
 
-char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_desecb_decode(char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*for_work;
@@ -104,7 +104,7 @@ char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 		key = getpass("Enter 64-bit key in HEX: ");
 	if (!ft_des_check_key(key, "0") && ft_printf("Key is incorrect!\n"))
 		return (NULL);
-	for_work = ft_get_str(ac, av, cmds);
+	for_work = ft_get_str(av, cmds);
 	if (!for_work)
 		return (NULL);
 	if (cmds->base64)

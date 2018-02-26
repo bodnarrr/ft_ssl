@@ -16,7 +16,6 @@ uint64_t		ft_key_to_bits(char *key)
 {
 	uint64_t	res;
 	int			i;
-	int			temp;
 
 	res = 0;
 	i = -1;

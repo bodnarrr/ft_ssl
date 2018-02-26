@@ -71,7 +71,7 @@ char			*ft_descbc_encode_all(char *input, char *key, char *iv,
 	return (res);
 }
 
-char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_descbc_encode(char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*for_work;
@@ -88,7 +88,7 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
 		iv = getpass("Enter 64-bit vector in HEX: ");
 	if (!ft_des_check_key(key, iv))
 		return (NULL);
-	for_work = ft_get_str(ac, av, cmds);
+	for_work = ft_get_str(av, cmds);
 	if (!for_work)
 		return (NULL);
 	res = ft_descbc_encode_all(for_work, key, iv, cmds);

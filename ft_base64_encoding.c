@@ -13,28 +13,11 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-static uint32_t	ft_str_to_32bits(char *str)
-{
-	int			i;
-	uint32_t	ret;
-
-	i = 0;
-	ret = 0;
-	while (*str)
-	{
-		ret <<= 8;
-		ret |= str[i];
-		str++;
-	}
-	return (ret);
-}
-
 static char		*ft_base64_encode_block(char *str, t_ssl_cmds *cmds)
 {
 	uint32_t	conv;
 	int			i;
 	char		*ret;
-	char		*cpy;
 
 	ret = ft_strnew(4);
 	i = -1;

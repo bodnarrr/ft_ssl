@@ -12,14 +12,14 @@
 
 #include "ft_ssl_des.h"
 
-int			ft_desecb(int ac, char **av, t_ssl_cmds *cmds)
+int			ft_desecb(char **av, t_ssl_cmds *cmds)
 {
 	char	*res_str;
 
 	if (!cmds->decr)
-		res_str = ft_desecb_encode(ac, av, cmds);
+		res_str = ft_desecb_encode(av, cmds);
 	else
-		res_str = ft_desecb_decode(ac, av, cmds);
+		res_str = ft_desecb_decode(av, cmds);
 	if (res_str == NULL)
 	{
 		ft_strdel(&res_str);

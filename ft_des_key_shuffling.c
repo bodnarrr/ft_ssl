@@ -20,6 +20,7 @@ uint64_t		ft_shuffle_key(uint64_t key, uint8_t i)
 	uint64_t	right;
 	int			clear;
 
+	clear = 0;
 	res = 0;
 	if (i == 1)
 		clear = 1;
@@ -39,6 +40,7 @@ uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i)
 	uint64_t	right;
 	int			clear;
 
+	clear = 0;
 	res = 0;
 	if (i == 1)
 		clear = 1;

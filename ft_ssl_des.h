@@ -58,7 +58,7 @@ typedef struct	s_ssl_cmds
 	uint64_t	vect_new;
 	bool		base64;
 	int			ret;
-	uint		size_output;
+	int			size_output;
 	uint		len_to_code;
 	uint		len_coded;
 	bool		last_iter;
@@ -70,17 +70,17 @@ int				ft_print_usage(void);
 int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
 t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
 
-int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_base64(char **av, t_ssl_cmds *cmds);
 char			*ft_base64_encode_all(char *for_work, t_ssl_cmds *cmds);
 void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds);
 char			*ft_base64_decode_all(char *for_work, t_ssl_cmds *cmds);
 int				ft_base64_check_input(char *str);
 
-char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_get_str(char **av, t_ssl_cmds *cmds);
 
-int				ft_desecb(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_desecb(char **av, t_ssl_cmds *cmds);
 int				ft_des_check_input(t_ssl_cmds *cmds);
-char			*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_desecb_encode(char **av, t_ssl_cmds *cmds);
 int				ft_des_check_key(char *key, char *iv);
 uint64_t		ft_key_to_bits(char *key);
 char			*ft_filled_by_len(char *input);
@@ -91,13 +91,13 @@ uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i);
 uint64_t		ft_s_boxes(uint64_t inf);
 char			*ft_string_from_bits(uint64_t inf);
 char			*ft_string_from_bits_r(uint64_t inf, t_ssl_cmds *cmds);
-char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_desecb_decode(char **av, t_ssl_cmds *cmds);
 char			*ft_ssl_join_block(char *str, char *block, int sz1, int sz2);
 char			*ft_des_clear_last_block(char **block, t_ssl_cmds *cmds);
 
-int				ft_descbc(int ac, char **av, t_ssl_cmds *cmds);
-char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds);
-char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds);
+int				ft_descbc(char **av, t_ssl_cmds *cmds);
+char			*ft_descbc_encode(char **av, t_ssl_cmds *cmds);
+char			*ft_descbc_decode(char **av, t_ssl_cmds *cmds);
 uint64_t		ft_descbc_make_vector(char *str);
 void			ft_clear_some_mem(t_ssl_cmds *cmds, char **temp, char **fordel,
 				char **input);

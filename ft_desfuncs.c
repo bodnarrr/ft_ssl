@@ -18,16 +18,16 @@ char			*ft_des_clear_last_block(char **block, t_ssl_cmds *cmds)
 	int			new_size;
 	char		*ret;
 
-	if ((*block)[7] > 8 || (*block)[7] < 1)
+	if ((*block)[7] > 0 && (*block)[7] < 9)
 	{
+		new_size = 8 - (*block)[7];
+		cmds->curr_block = new_size;
+		ret = ft_strsub(*block, 0, new_size);
 		ft_strdel(block);
-		return (NULL);
+		return (ret);
 	}
-	new_size = 8 - (*block)[7];
-	cmds->curr_block = new_size;
-	ret = ft_strsub(*block, 0, new_size);
-	ft_strdel(block);
-	return (ret);
+	else
+		return (*block);
 }
 
 char			*ft_filled_by_len(char *input)

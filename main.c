@@ -24,11 +24,11 @@ int		main(int ac, char **av)
 	if (cmds->mode == 0)
 		return (ft_ssl_error(av[1], &cmds));
 	if (cmds->mode == 1)
-		ret = ft_base64(ac, av, cmds);
+		ret = ft_base64(av, cmds);
 	if (cmds->mode == 2)
-		ret = ft_desecb(ac, av, cmds);
+		ret = ft_desecb(av, cmds);
 	if (cmds->mode == 3)
-		ret = ft_descbc(ac, av, cmds);
+		ret = ft_descbc(av, cmds);
 	free(cmds);
 	return (ret);
 }

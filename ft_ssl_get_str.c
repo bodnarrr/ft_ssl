@@ -12,12 +12,12 @@
 
 #include "ft_ssl_des.h"
 
-char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_get_str(char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
 	char		buf[BUFF_SSL + 1];
-	char		rd;
+	int			rd;
 	int			fd;
 
 	fd = 0;
@@ -35,5 +35,7 @@ char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds)
 		ft_strdel(&fordel);
 		ft_bzero(buf, BUFF_SSL);
 	}
+	if (rd == -1 && ft_printf("Ha-ha! I can't encrypt directory!\n"))
+		return (NULL);
 	return (res);
 }

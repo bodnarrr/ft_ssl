@@ -12,12 +12,12 @@
 
 #include "ft_ssl_des.h"
 
-int			ft_base64(int ac, char **av, t_ssl_cmds *cmds)
+int			ft_base64(char **av, t_ssl_cmds *cmds)
 {
 	char	*res_str;
 	char	*for_work;
 
-	for_work = ft_get_str(ac, av, cmds);
+	for_work = ft_get_str(av, cmds);
 	if (for_work == NULL)
 		return (1);
 	if (!cmds->decr)

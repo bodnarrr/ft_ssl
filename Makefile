@@ -23,21 +23,26 @@ SRCS = main.c ft_ssl_errors.c ft_base64.c ft_ssl_get_commands.c \
 
 OBJECTS = $(SRCS:.c=.o)
 
-CC = gcc
-FLAGS ?= -Wall -Wextra -Werror
-FLAGS += -I./src/ -I./libft/
+FLAGS = -Wall -Wextra -Werror
+FLAGS = -I./src/ -I./libftprintf/
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(LIB)
-	@$(CC) -o $@ $(FLAGS) $(OBJECTS) $(LIB)
+%.o : %.c
+	@gcc -I. -Wall -Werror -Wextra -c $< -o $@
+
+$(NAME): $(LIB) $(OBJECTS)
+	@gcc -o $@ $(FLAGS) $(OBJECTS) $(LIB)
+	@echo "\033[1;32mFT_SSL is ready\033[0m"
 
 $(LIB):
 	@make -C ./libftprintf/
+	@cp ./libftprintf/libftprintf.a .
 
 clean:
-	@make -C ./libftprintf/ fclean
-	@rm $(OBJECTS)
+	@make fclean -C ./libftprintf
+	@rm -f *.o
+	@echo "\033[1;32mObject files ft_ssl were removed\033[0m"
 
 fclean: clean
 	@rm -f $(NAME)

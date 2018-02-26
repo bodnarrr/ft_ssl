@@ -99,7 +99,7 @@ static char		*ft_get_pre_base64(char *for_work, t_ssl_cmds *cmds)
 	return (res);
 }
 
-char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_descbc_decode(char **av, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*for_work;
@@ -116,7 +116,7 @@ char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds)
 		iv = getpass("Enter 64-bit vector in HEX: ");
 	if (!ft_des_check_key(key, iv))
 		return (NULL);
-	if ((for_work = ft_get_str(ac, av, cmds)) == NULL)
+	if ((for_work = ft_get_str(av, cmds)) == NULL)
 		return (NULL);
 	if (cmds->base64)
 		for_work = ft_get_pre_base64(for_work, cmds);
