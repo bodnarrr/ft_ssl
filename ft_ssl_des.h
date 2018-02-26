@@ -71,15 +71,17 @@ int				ft_ssl_error(char *cmd, t_ssl_cmds **cmds);
 t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av);
 
 int				ft_base64(int ac, char **av, t_ssl_cmds *cmds);
-char			*ft_base64_encode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_base64_encode_all(char *for_work, t_ssl_cmds *cmds);
 void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds);
-char			*ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds);
+char			*ft_base64_decode_all(char *for_work, t_ssl_cmds *cmds);
+int				ft_base64_check_input(char *str);
+
 char			*ft_get_str(int ac, char **av, t_ssl_cmds *cmds);
 
 int				ft_desecb(int ac, char **av, t_ssl_cmds *cmds);
 int				ft_des_check_input(t_ssl_cmds *cmds);
 char			*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds);
-int				ft_des_check_key(char *key);
+int				ft_des_check_key(char *key, char *iv);
 uint64_t		ft_key_to_bits(char *key);
 char			*ft_filled_by_len(char *input);
 uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new, int curr);
@@ -97,5 +99,7 @@ int				ft_descbc(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds);
 uint64_t		ft_descbc_make_vector(char *str);
+void			ft_clear_some_mem(t_ssl_cmds *cmds, char **temp, char **fordel,
+				char **input);
 
 #endif

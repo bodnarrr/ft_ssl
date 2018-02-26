@@ -51,23 +51,6 @@ char			*ft_filled_by_len(char *input)
 	}
 }
 
-char			*ft_string_from_bits(uint64_t inf)
-{
-	char		*res;
-	uint8_t		temp;
-	int			i;
-
-	res = ft_strnew(8);
-	i = -1;
-	while (++i < 8)
-	{
-		temp = (inf >> (56 - i * 8)) & 255;
-		res[i] = temp;
-	}
-	i = -1;
-	return (res);
-}
-
 uint64_t		ft_s_boxes(uint64_t inf)
 {
 	int			i;
@@ -83,23 +66,4 @@ uint64_t		ft_s_boxes(uint64_t inf)
 		res = res | g_six_to_four[i][(CENTR4OF6(temp)) | ((FL2OF6(temp)) << 4)];
 	}
 	return (res);
-}
-
-uint64_t		ft_shuffle_key(uint64_t key, uint8_t i)
-{
-	uint64_t	res;
-	uint64_t	left;
-	uint64_t	right;
-	int			clear;
-
-	res = 0;
-	if (i == 1)
-		clear = 1;
-	else if (i == 2)
-		clear = 3;
-	left = L28OF56(key);
-	right = R28OF56(key);
-	left = (left << i & 0xFFFFFFF) | (left >> (28 - i) & clear);
-	right = (right << i & 0xFFFFFFF) | (right >> (28 - i) & clear);
-	return (JOINBITS(left, right, 28));
 }

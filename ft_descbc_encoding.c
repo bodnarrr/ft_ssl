@@ -86,14 +86,14 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds)
 		iv = ft_strdup(av[cmds->ivpos]);
 	else
 		iv = getpass("Enter 64-bit vector in HEX: ");
-	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
-		return (NULL);
-	if (!ft_des_check_key(iv) && ft_printf("Vector is incorrect!\n"))
+	if (!ft_des_check_key(key, iv))
 		return (NULL);
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
 	res = ft_descbc_encode_all(for_work, key, iv, cmds);
+	if (cmds->base64)
+		res = ft_base64_encode_all(res, cmds);
 	ft_strdel(&for_work);
 	return (res);
 }

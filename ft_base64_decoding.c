@@ -52,7 +52,7 @@ static char		*ft_base64_decode_block(char *str, t_ssl_cmds *cmds)
 	return (ret);
 }
 
-static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
+char			*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 {
 	char		*res;
 	char		*fordel;
@@ -80,7 +80,7 @@ static char		*ft_base64_decode_all(char *crypted, t_ssl_cmds *cmds)
 	return (res);
 }
 
-static int		ft_base64_check_input(char *str)
+int				ft_base64_check_input(char *str)
 {
 	int			i;
 	int			j;
@@ -107,22 +107,4 @@ static int		ft_base64_check_input(char *str)
 	if ((len - j) % 4 != 0)
 		return (0);
 	return (1);
-}
-
-char			*ft_base64_decode(int ac, char **av, t_ssl_cmds *cmds)
-{
-	char		*for_work;
-	char		*decrypted;
-
-	for_work = ft_get_str(ac, av, cmds);
-	if (!for_work)
-		return (NULL);
-	if (!ft_base64_check_input(for_work))
-	{
-		ft_strdel(&for_work);
-		ft_printf("Incorrect input!\n");
-		return (NULL);
-	}
-	decrypted = ft_base64_decode_all(for_work, cmds);
-	return (decrypted);
 }

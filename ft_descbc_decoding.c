@@ -43,6 +43,22 @@ static char		*ft_descbc_decode_block(char *in, uint64_t key, uint64_t vect,
 		cmd));
 }
 
+static char		*ft_temp_for_cbcdecode(t_ssl_cmds *cmds, char *input,
+				uint64_t bit_key, uint64_t bit_vector)
+{
+	char		*temp;
+
+	if (cmds->len_to_code - cmds->len_coded == 8)
+		cmds->last_iter = 1;
+	if (cmds->len_coded == 0)
+		temp = ft_descbc_decode_block(input, bit_key, bit_vector, cmds);
+	else
+		temp = ft_descbc_decode_block(input, bit_key, cmds->vect_new, cmds);
+	if (cmds->last_iter)
+		temp = ft_des_clear_last_block(&temp, cmds);
+	return (temp);
+}
+
 static char		*ft_descbc_decode_all(char *input, char *key, char *iv,
 				t_ssl_cmds *cmds)
 {
@@ -57,14 +73,7 @@ static char		*ft_descbc_decode_all(char *input, char *key, char *iv,
 	bit_vector = ft_key_to_bits(iv);
 	while (cmds->len_coded < cmds->len_to_code)
 	{
-		if (cmds->len_to_code - cmds->len_coded == 8)
-			cmds->last_iter = 1;
-		if (cmds->len_coded == 0)
-			temp = ft_descbc_decode_block(input, bit_key, bit_vector, cmds);
-		else
-			temp = ft_descbc_decode_block(input, bit_key, cmds->vect_new, cmds);
-		if (cmds->last_iter)
-			temp = ft_des_clear_last_block(&temp, cmds);
+		temp = ft_temp_for_cbcdecode(cmds, input, bit_key, bit_vector);
 		if (temp == NULL)
 		{
 			ft_strdel(&res);
@@ -73,12 +82,20 @@ static char		*ft_descbc_decode_all(char *input, char *key, char *iv,
 		cmds->vector = ft_descbc_make_vector(temp);
 		fordel = res;
 		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->curr_block);
-		ft_strdel(&temp);
-		ft_strdel(&fordel);
-		cmds->size_output += cmds->curr_block;
-		input += 8;
-		cmds->len_coded += 8;
+		ft_clear_some_mem(cmds, &temp, &fordel, &input);
 	}
+	return (res);
+}
+
+static char		*ft_get_pre_base64(char *for_work, t_ssl_cmds *cmds)
+{
+	char		*res;
+
+	res = ft_base64_decode_all(for_work, cmds);
+	ft_strdel(&for_work);
+	cmds->len_coded = 0;
+	cmds->len_to_code = cmds->size_output;
+	cmds->size_output = 0;
 	return (res);
 }
 
@@ -97,18 +114,14 @@ char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds)
 		iv = ft_strdup(av[cmds->ivpos]);
 	else
 		iv = getpass("Enter 64-bit vector in HEX: ");
-	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
+	if (!ft_des_check_key(key, iv))
 		return (NULL);
-	if (!ft_des_check_key(iv) && ft_printf("Vector is incorrect!\n"))
+	if ((for_work = ft_get_str(ac, av, cmds)) == NULL)
 		return (NULL);
-	for_work = ft_get_str(ac, av, cmds);
-	if (!for_work)
-		return (NULL);
+	if (cmds->base64)
+		for_work = ft_get_pre_base64(for_work, cmds);
 	if (cmds->len_to_code % 8 != 0 && ft_printf("Incorrect input!\n"))
-	{
-		ft_strdel(&for_work);
 		return (NULL);
-	}
 	res = ft_descbc_decode_all(for_work, key, iv, cmds);
 	ft_strdel(&for_work);
 	return (res);

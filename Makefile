@@ -19,7 +19,7 @@ SRCS = main.c ft_ssl_errors.c ft_base64.c ft_ssl_get_commands.c \
 		ft_desecb_decoding.c ft_ssl_get_str.c ft_ssl_write.c \
 		ft_ssl_join_block.c ft_des_join_block.c ft_descbc.c \
 		ft_descbc_encoding.c ft_des_make_keyvector.c \
-		ft_descbc_decoding.c
+		ft_descbc_decoding.c ft_des_key_shuffling.c ft_str_from_bits.c \
 
 OBJECTS = $(SRCS:.c=.o)
 

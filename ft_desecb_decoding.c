@@ -13,42 +13,6 @@
 #include "ft_ssl_des.h"
 #include "ft_ssl_globals.h"
 
-char			*ft_string_from_bits_r(uint64_t inf, t_ssl_cmds *cmds)
-{
-	char		*res;
-	uint8_t		temp;
-	int			i;
-
-	res = ft_strnew(8);
-	i = -1;
-	while (++i < 8)
-	{
-		temp = (inf >> (56 - i * 8)) & 255;
-		res[i] = temp;
-	}
-	cmds->curr_block = 8;
-	return (res);
-}
-
-uint64_t		ft_shuffle_key_rev(uint64_t key, uint8_t i)
-{
-	uint64_t	res;
-	uint64_t	left;
-	uint64_t	right;
-	int			clear;
-
-	res = 0;
-	if (i == 1)
-		clear = 1;
-	else if (i == 2)
-		clear = 3;
-	left = L28OF56(key);
-	right = R28OF56(key);
-	left = (left >> i) | ((left & clear) << (28 - i));
-	right = (right >> i) | ((right & clear) << (28 - i));
-	return (JOINBITS(left, right, 28));
-}
-
 static char		*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 {
 	uint64_t	conv;
@@ -78,6 +42,16 @@ static char		*ft_desecb_decode_block(char *in, uint64_t key, t_ssl_cmds *cmd)
 	return (ft_string_from_bits_r(ft_des_permut(conv, g_finish, 64, 64), cmd));
 }
 
+void			ft_clear_some_mem(t_ssl_cmds *cmds, char **temp, char **fordel,
+				char **input)
+{
+	ft_strdel(temp);
+	ft_strdel(fordel);
+	cmds->size_output += cmds->curr_block;
+	*input += 8;
+	cmds->len_coded += 8;
+}
+
 static char		*ft_desecb_decode_all(char *input, char *key, t_ssl_cmds *cmds)
 {
 	char		*res;
@@ -101,12 +75,20 @@ static char		*ft_desecb_decode_all(char *input, char *key, t_ssl_cmds *cmds)
 		}
 		fordel = res;
 		res = ft_ssl_join_block(res, temp, cmds->size_output, cmds->curr_block);
-		ft_strdel(&temp);
-		ft_strdel(&fordel);
-		cmds->size_output += cmds->curr_block;
-		input += 8;
-		cmds->len_coded += 8;
+		ft_clear_some_mem(cmds, &temp, &fordel, &input);
 	}
+	return (res);
+}
+
+static char		*ft_base_for_ecb(char **for_work, t_ssl_cmds *cmds)
+{
+	char		*res;
+
+	res = ft_base64_decode_all(*for_work, cmds);
+	ft_strdel(for_work);
+	cmds->len_coded = 0;
+	cmds->len_to_code = cmds->size_output;
+	cmds->size_output = 0;
 	return (res);
 }
 
@@ -120,11 +102,13 @@ char			*ft_desecb_decode(int ac, char **av, t_ssl_cmds *cmds)
 		key = ft_strdup(av[cmds->keypos]);
 	else
 		key = getpass("Enter 64-bit key in HEX: ");
-	if (!ft_des_check_key(key) && ft_printf("Key is incorrect!\n"))
+	if (!ft_des_check_key(key, "0") && ft_printf("Key is incorrect!\n"))
 		return (NULL);
 	for_work = ft_get_str(ac, av, cmds);
 	if (!for_work)
 		return (NULL);
+	if (cmds->base64)
+		for_work = ft_base_for_ecb(&for_work, cmds);
 	if (cmds->len_to_code % 8 != 0 && ft_printf("Incorrect input!\n"))
 	{
 		ft_strdel(&for_work);
