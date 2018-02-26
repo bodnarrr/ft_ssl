@@ -98,7 +98,4 @@ char			*ft_descbc_encode(int ac, char **av, t_ssl_cmds *cmds);
 char			*ft_descbc_decode(int ac, char **av, t_ssl_cmds *cmds);
 uint64_t		ft_descbc_make_vector(char *str);
 
-
-
-
 #endif

@@ -15,8 +15,8 @@
 
 uint64_t		ft_input_to_bits(char *str)
 {
-	uint64_t		res;
-	int				i;
+	uint64_t	res;
+	int			i;
 
 	res = 0;
 	i = -1;
@@ -28,7 +28,8 @@ uint64_t		ft_input_to_bits(char *str)
 	return (res);
 }
 
-uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new_sz, int curr_sz)
+uint64_t		ft_des_permut(uint64_t nb, uint8_t prm[], int new_sz,
+				int curr_sz)
 {
 	int			i;
 	uint64_t	res;
@@ -53,7 +54,6 @@ static char		*ft_desecb_encode_block(char *input, uint64_t key)
 
 	i = -1;
 	converted = ft_input_to_bits(input);
-	// ft_printf("con = %.16llX\nkey = %llX\n", converted, key);
 	converted = ft_des_permut(converted, g_initial_shuffle, 64, 64);
 	key = ft_des_permut(key, g_pc1, 56, 64);
 	while (++i < 16)
@@ -70,7 +70,6 @@ static char		*ft_desecb_encode_block(char *input, uint64_t key)
 		converted = JOINBITS(left_new, right, 32);
 	}
 	converted = (R32OF64(converted) << 32) | (L32OF64(converted));
-	// ft_printf("res = %.16llX\n", ft_des_permut(converted, g_finish, 64, 64));
 	return (ft_string_from_bits(ft_des_permut(converted, g_finish, 64, 64)));
 }
 
@@ -95,16 +94,16 @@ static char		*ft_desecb_encode_all(char *input, char *key, t_ssl_cmds *cmds)
 		ft_strdel(&fordel);
 		cmds->len_coded += 8;
 		input += 8;
-		cmds->size_output +=8;
+		cmds->size_output += 8;
 	}
 	return (res);
 }
 
-char		*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
+char			*ft_desecb_encode(int ac, char **av, t_ssl_cmds *cmds)
 {
-	char	*res;
-	char	*for_work;
-	char	*key;
+	char		*res;
+	char		*for_work;
+	char		*key;
 
 	if (cmds->key)
 		key = ft_strdup(av[cmds->keypos]);

@@ -23,7 +23,6 @@ char			*ft_descbc_encode_block(char *input, uint64_t key, uint64_t iv)
 
 	i = -1;
 	conv = ft_input_to_bits(input);
-	// ft_printf("conv = %.16llX\nkey = %.16llX\nvector = %.16llX\n", conv, key, iv);
 	conv ^= iv;
 	conv = ft_des_permut(conv, g_initial_shuffle, 64, 64);
 	key = ft_des_permut(key, g_pc1, 56, 64);
@@ -40,7 +39,6 @@ char			*ft_descbc_encode_block(char *input, uint64_t key, uint64_t iv)
 		conv = JOINBITS(left_new, right, 32);
 	}
 	conv = (R32OF64(conv) << 32) | (L32OF64(conv));
-	// ft_printf("res = %.16llX\n", ft_des_permut(conv, g_finish, 64, 64)); 
 	return (ft_string_from_bits(ft_des_permut(conv, g_finish, 64, 64)));
 }
 

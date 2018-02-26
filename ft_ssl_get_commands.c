@@ -53,7 +53,8 @@ t_ssl_cmds		*ft_ssl_get_commands(int ac, char **av)
 			cmds->encr = 1;
 		if (ft_strequ(av[i], "-d") && (cmds->encr = 0) == 0)
 			cmds->decr = 1;
-		if ((ft_strequ(av[i], "-k") || ft_strequ(av[i], "-K")) && (cmds->key = 1) == 1)
+		if ((ft_strequ(av[i], "-k") || ft_strequ(av[i], "-K"))
+			&& (cmds->key = 1) == 1)
 			cmds->keypos = i + 1;
 		if (ft_strequ(av[i], "-i") && (cmds->in = 1) == 1)
 			cmds->inpos = i + 1;

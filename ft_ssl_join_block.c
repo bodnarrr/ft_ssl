@@ -19,13 +19,13 @@ char		*ft_ssl_join_block(char *str, char *block, int sz1, int sz2)
 
 	res = ft_strnew(sz1 + sz2);
 	ret = res;
-	while(sz1--)
+	while (sz1--)
 	{
 		*res = *str;
 		res++;
-		str++; 
+		str++;
 	}
-	while(sz2--)
+	while (sz2--)
 	{
 		*res = *block;
 		res++;

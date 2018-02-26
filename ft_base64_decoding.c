@@ -87,9 +87,9 @@ static int		ft_base64_check_input(char *str)
 	int			len;
 
 	len = ft_strlen(str);
-	i = 0;
+	i = -1;
 	j = 0;
-	while (str[i])
+	while (str[++i])
 	{
 		if (!ft_strchr(g_base64, str[i]))
 		{
@@ -103,7 +103,6 @@ static int		ft_base64_check_input(char *str)
 			else
 				return (0);
 		}
-		i++;
 	}
 	if ((len - j) % 4 != 0)
 		return (0);

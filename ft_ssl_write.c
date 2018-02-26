@@ -16,7 +16,6 @@ void			ft_ssl_write(char **av, char **str, t_ssl_cmds *cmds)
 {
 	int			fd;
 
-	// ft_printf("output = %d\n", cmds->size_output);
 	fd = 1;
 	if (cmds->out)
 		fd = open(av[cmds->outpos], O_WRONLY | O_CREAT, 0777);
